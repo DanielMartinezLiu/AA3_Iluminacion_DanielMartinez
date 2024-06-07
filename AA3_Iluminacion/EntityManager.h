@@ -7,7 +7,6 @@
 
 #define ENTITIES EntityManager::Instance()
 
-
 class EntityManager
 {
 public:

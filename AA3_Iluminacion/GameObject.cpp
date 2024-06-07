@@ -52,4 +52,16 @@ void GameObject::Render()
 	glBindVertexArray(0);
 }
 
+void GameObject::SetPointLights(PointLight* pLight, unsigned int lightCount)
+{
+	if (lightCount > MAX_POINT_LIGHTS)
+		lightCount = MAX_POINT_LIGHTS;
+
+	glUniform1i(glGetUniformLocation(program, "pointLightCount"), lightCount);
+
+	for (size_t i = 0; i < lightCount; i++)
+	{
+		pLight[i].UsePointLight(program, i);
+	}
+}
 

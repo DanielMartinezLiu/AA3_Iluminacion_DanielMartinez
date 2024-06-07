@@ -11,8 +11,7 @@ class Light
 public:
 	Light();
 
-	Light(
-		GLfloat _red, GLfloat _green, GLfloat _blue, 
+	Light(GLfloat _red, GLfloat _green, GLfloat _blue, 
 		GLfloat _ambientIntensity, GLfloat _diffuseIntensity);
 	~Light();
 

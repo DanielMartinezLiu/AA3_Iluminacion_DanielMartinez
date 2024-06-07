@@ -4,6 +4,8 @@
 #include "Entity.h"
 #include "GLManager.h"
 #include "DirectionalLight.h"
+#include "PointLight.h"
+#include "CommonValues.h"
 
 class GameObject : public Entity
 {
@@ -13,6 +15,8 @@ public:
 
 	void Update() override;
 	void Render() override;
+
+	void SetPointLights(PointLight* pLight, unsigned int lightCount);
 
 private:
 	glm::vec3 eyePosition;

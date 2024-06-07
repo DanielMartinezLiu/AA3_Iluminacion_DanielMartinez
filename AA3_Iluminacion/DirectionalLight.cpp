@@ -16,11 +16,11 @@ DirectionalLight::DirectionalLight(
 
 void DirectionalLight::UseDirectionalLight(GLuint program)
 {
-	glUniform3f(glGetUniformLocation(program, "directionalLight.color"), color.x, color.y, color.z);
-	glUniform1f(glGetUniformLocation(program, "directionalLight.ambientIntensity"), ambientIntensity);
+	glUniform3f(glGetUniformLocation(program, "directionalLight.base.color"), color.x, color.y, color.z);
+	glUniform1f(glGetUniformLocation(program, "directionalLight.base.ambientIntensity"), ambientIntensity);
+	glUniform1f(glGetUniformLocation(program, "directionalLight.base.diffuseIntensity"), diffuseIntensity);
 
 	glUniform3f(glGetUniformLocation(program, "directionalLight.direction"), direction.x, direction.y, direction.z);
-	glUniform1f(glGetUniformLocation(program, "directionalLight.diffuseIntensity"), diffuseIntensity);
 
 }
 
