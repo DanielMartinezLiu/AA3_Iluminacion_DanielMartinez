@@ -1,6 +1,6 @@
 #include "Primitive.h"
 
-Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color, Light _light)
+Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color, DirectionalLight _light)
 {
 	program = _program;
 	transform = Transform(_position, _rotation, _scale);
@@ -82,7 +82,7 @@ void Primitive::Update()
 	glUniform4f(glGetUniformLocation(program, "baseColor"), color.x, color.y, color.z, color.w);
 	glUniform1i(glGetUniformLocation(program, "usingTexture"), 0);
 
-	light.UseLight(program);
+	light.UseDirectionalLight(program);
 }
 
 void Primitive::Render()

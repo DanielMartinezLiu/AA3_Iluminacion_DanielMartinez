@@ -5,7 +5,7 @@
 
 #include "Entity.h"
 #include "GLManager.h"
-#include "Light.h"
+#include "DirectionalLight.h"
 
 class Primitive : public Entity
 {
@@ -13,13 +13,13 @@ class Primitive : public Entity
 private:
 	std::vector<GLfloat> points;
 	glm::vec4 color;
-	Light light;
+	DirectionalLight light;
 
 	GLuint vao;
 	GLuint vbo;
 
 public:
-	Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color, Light _light);
+	Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color, DirectionalLight _light);
 
 	void InitPrimitive();
 	void Update() override;
