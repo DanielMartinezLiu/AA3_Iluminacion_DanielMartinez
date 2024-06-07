@@ -1,6 +1,6 @@
 #version 440 core
 
-layout(location = 0) in vec3 posicion;
+layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 uvsVertexShader;
 layout(location = 2) in vec3 normalsVertexShader;
 
@@ -12,5 +12,5 @@ void main() {
     uvsGeometryShader = uvsVertexShader;
     normalsGeometryShader = normalsVertexShader;
 
-    gl_Position = vec4(posicion, 1.0);
+    gl_Position = vec4(position, 1.0);
 }

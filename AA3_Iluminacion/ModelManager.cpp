@@ -53,7 +53,6 @@ Model ModelManager::LoadOBJModel(const std::string& filePath)
 
 			//Almaceno en mi vector de vertices los valores
 			tmpVertices.push_back(tmpVec3);
-
 		}
 
 		//Estoy leyendo una UV (texture coordinate)
@@ -64,8 +63,6 @@ Model ModelManager::LoadOBJModel(const std::string& filePath)
 
 			//Almaceno en mi vector temporal las UVs
 			tmpTextureCoordinates.push_back(tmpVec2);
-
-
 		}
 
 		//Estoy leyendo una normal
