@@ -1,10 +1,12 @@
 #include "GameObject.h"
 
-GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, Model _model, Light _light, int _textureId)
+GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec3 _eyePosition, Model _model, Material _material, DirectionalLight _light, int _textureId)
 {
 	transform = Transform(_position, _rotation, _scale);
 
+	eyePosition = _eyePosition;
 	model = _model;
+	material = _material;
 	program = _program;
 	textureId = _textureId;
 	light = _light;
@@ -31,7 +33,10 @@ void GameObject::Update()
 
 	glUniform1i(glGetUniformLocation(program, "usingTexture"), 1);
 
-	light.UseLight(program);
+	glUniform3f(glGetUniformLocation(program, "eyePosition"), eyePosition.x, eyePosition.y, eyePosition.z);
+
+	material.UseMaterial(program);
+	light.UseDirectionalLight(program);
 }
 
 void GameObject::Render()
