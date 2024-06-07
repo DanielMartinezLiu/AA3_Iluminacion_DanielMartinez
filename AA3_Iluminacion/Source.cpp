@@ -46,7 +46,7 @@ void main() {
 		TEXTURES.LoadTextures();
 
 		//Definimos color para limpiar el buffer de color
-		glClearColor(0.f, 0.f, 0.f, 1.f);
+		GLM.ClearColor();
 
 		//Definimos modo de dibujo para cada cara
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

@@ -2,7 +2,7 @@
 
 void ProgramManager::Compile()
 {
-	AddProgram(Program("MyFirstVertexShader.glsl", "MyFirstGeometryShader.glsl", "MyFirstFragmentShader.glsl"));
+	AddProgram(Program("VertexShader.glsl", "GeometryShader.glsl", "FragmentShader.glsl"));
 }
 
 GLuint ProgramManager::CreateProgram(const Program& shaders)

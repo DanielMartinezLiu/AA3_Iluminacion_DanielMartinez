@@ -13,7 +13,7 @@ Model ModelManager::LoadOBJModel(const std::string& filePath)
 	std::ifstream file(filePath);
 
 	if (!file.is_open()) {
-		std::cerr << "No se ha podido abrir el archivo: " << filePath << std::endl;
+		std::cerr << "Unable to open file: " << filePath << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
 
@@ -25,14 +25,17 @@ Model ModelManager::LoadOBJModel(const std::string& filePath)
 	glm::vec2 tmpVec2;
 
 	//Variables elemento modelo
-	std::vector<float> vertexs;
-	std::vector<float> vertexNormal;
+	std::vector<float> vertices;
+	std::vector<float> vertexNormals;
 	std::vector<float> textureCoordinates;
 
 	//Variables temporales para algoritmos de sort
-	std::vector<float> tmpVertexs;
-	std::vector<float> tmpNormals;
-	std::vector<float> tmpTextureCoordinates;
+	std::vector<glm::vec3> tmpVertices;
+	std::vector<glm::vec3> tmpNormals;
+	std::vector<glm::vec2> tmpTextureCoordinates;
+
+	//Index buffer para las caras 
+	std::vector<unsigned int> indices;
 
 	//Recorremos archivo linea por linea
 	while (std::getline(file, line)) {
@@ -49,9 +52,8 @@ Model ModelManager::LoadOBJModel(const std::string& filePath)
 			ss >> tmpVec3.x >> tmpVec3.y >> tmpVec3.z;
 
 			//Almaceno en mi vector de vertices los valores
-			tmpVertexs.push_back(tmpVec3.x);
-			tmpVertexs.push_back(tmpVec3.y);
-			tmpVertexs.push_back(tmpVec3.z);
+			tmpVertices.push_back(tmpVec3);
+
 		}
 
 		//Estoy leyendo una UV (texture coordinate)
@@ -61,8 +63,8 @@ Model ModelManager::LoadOBJModel(const std::string& filePath)
 			ss >> tmpVec2.x >> tmpVec2.y;
 
 			//Almaceno en mi vector temporal las UVs
-			tmpTextureCoordinates.push_back(tmpVec2.x);
-			tmpTextureCoordinates.push_back(tmpVec2.y);
+			tmpTextureCoordinates.push_back(tmpVec2);
+
 
 		}
 
@@ -73,48 +75,99 @@ Model ModelManager::LoadOBJModel(const std::string& filePath)
 			ss >> tmpVec3.x >> tmpVec3.y >> tmpVec3.z;
 
 			//Almaceno en mi vector temporal de normales las normales
-			tmpNormals.push_back(tmpVec3.x);
-			tmpNormals.push_back(tmpVec3.y);
-			tmpNormals.push_back(tmpVec3.z);
+			tmpNormals.push_back(tmpVec3);
 
 		}
 
 		//Estoy leyendo una cara
 		else if (prefix == "f") {
+			// Vectores para guardar los indices de los vertices, UVs y normales
+			std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
+			unsigned int vertexIndex, uvIndex, normalIndex;
+			char slash;
 
-			int vertexData;
-			short counter = 0;
+			// Bucle para leer las caras
+			while (ss >> vertexIndex >> slash >> uvIndex >> slash >> normalIndex) {
+				// Guarda los indicies para los vertices, UVs y normales
+				vertexIndices.push_back(vertexIndex - 1);
+				uvIndices.push_back(uvIndex - 1);
+				normalIndices.push_back(normalIndex - 1);
+			}
 
-			//Obtengo todos los valores hasta un espacio
-			while (ss >> vertexData) {
+			// Bucle entre todo los indicies
+			for (size_t i = 0; i < vertexIndices.size(); ++i) {
+				// Añadimos la posicion de los vertices al vector de vertices.
+				vertices.push_back(tmpVertices[vertexIndices[i]].x);
+				vertices.push_back(tmpVertices[vertexIndices[i]].y);
+				vertices.push_back(tmpVertices[vertexIndices[i]].z);
 
-				//En orden cada numero sigue el patron de vertice/uv/normal
-				switch (counter) {
-				case 0:
-					//Si es un vertice lo almaceno - 1 por el offset y almaceno dos seguidos al ser un vec3, salto 1 / y aumento el contador en 1
-					vertexs.push_back(tmpVertexs[(vertexData - 1) * 3]);
-					vertexs.push_back(tmpVertexs[((vertexData - 1) * 3) + 1]);
-					vertexs.push_back(tmpVertexs[((vertexData - 1) * 3) + 2]);
-					ss.ignore(1, '/');
-					counter++;
-					break;
-				case 1:
-					//Si es un uv lo almaceno - 1 por el offset y almaceno dos seguidos al ser un vec2, salto 1 / y aumento el contador en 1
-					textureCoordinates.push_back(tmpTextureCoordinates[(vertexData - 1) * 2]);
-					textureCoordinates.push_back(tmpTextureCoordinates[((vertexData - 1) * 2) + 1]);
-					ss.ignore(1, '/');
-					counter++;
-					break;
-				case 2:
-					//Si es una normal la almaceno - 1 por el offset y almaceno tres seguidos al ser un vec3, salto 1 / y reinicio
-					vertexNormal.push_back(tmpNormals[(vertexData - 1) * 3]);
-					vertexNormal.push_back(tmpNormals[((vertexData - 1) * 3) + 1]);
-					vertexNormal.push_back(tmpNormals[((vertexData - 1) * 3) + 2]);
-					counter = 0;
-					break;
+				// Si las texturas estan, añadimos al vector de cordenadas de texturas
+				if (!tmpTextureCoordinates.empty()) {
+					textureCoordinates.push_back(tmpTextureCoordinates[uvIndices[i]].x);
+					textureCoordinates.push_back(tmpTextureCoordinates[uvIndices[i]].y);
 				}
+
+				// Si las normales estan, añadimos al vector de normales
+				if (!tmpNormals.empty()) {
+					vertexNormals.push_back(tmpNormals[normalIndices[i]].x);
+					vertexNormals.push_back(tmpNormals[normalIndices[i]].y);
+					vertexNormals.push_back(tmpNormals[normalIndices[i]].z);
+				}
+
+				// Añadimos los indicies al vector de indicies.
+				indices.push_back(static_cast<unsigned int>(indices.size()));
 			}
 		}
 	}
-	return Model(vertexs, textureCoordinates, vertexNormal);
+	file.close();
+
+	if (vertexNormals.empty()) {
+		vertexNormals.resize(vertices.size(), 0.0f);
+		CalculateAverageNormals(indices.data(), static_cast<unsigned int>(indices.size()), vertices.data(), static_cast<unsigned int>(vertices.size()), 3, 0);
+	}
+
+	return Model(vertices, textureCoordinates, vertexNormals);
+}
+
+void ModelManager::CalculateAverageNormals(unsigned int* indices, unsigned int indiceCount, float* vertices, unsigned int verticeCount, unsigned int vLength, unsigned int normalOffset)
+{
+	for (size_t i = 0; i < indiceCount; i += 3)
+	{
+		unsigned int in0 = indices[i] * vLength;
+		unsigned int in1 = indices[i + 1] * vLength;
+		unsigned int in2 = indices[i + 2] * vLength;
+
+		glm::vec3 v1(vertices[in1] - vertices[in0], vertices[in1 + 1] - vertices[in0 + 1], vertices[in1 + 2] - vertices[in0 + 2]);
+		glm::vec3 v2(vertices[in2] - vertices[in0], vertices[in2 + 1] - vertices[in0 + 1], vertices[in2 + 2] - vertices[in0 + 2]);
+
+		glm::vec3 normal = glm::cross(v1, v2);
+		normal = glm::normalize(normal);
+
+		in0 += normalOffset;
+		in1 += normalOffset;
+		in2 += normalOffset;
+
+		vertices[in0] += normal.x;
+		vertices[in0 + 1] += normal.y;
+		vertices[in0 + 2] += normal.z;
+
+		vertices[in1] += normal.x;
+		vertices[in1 + 1] += normal.y;
+		vertices[in1 + 2] += normal.z;
+
+		vertices[in2] += normal.x;
+		vertices[in2 + 1] += normal.y;
+		vertices[in2 + 2] += normal.z;
+	}
+
+	for (size_t i = 0; i < verticeCount / vLength; i++)
+	{
+		unsigned int nOffset = i * vLength + normalOffset;
+		glm::vec3 vec(vertices[nOffset], vertices[nOffset + 1], vertices[nOffset + 2]);
+		vec = glm::normalize(vec);
+
+		vertices[nOffset] = vec.x;
+		vertices[nOffset + 1] = vec.y;
+		vertices[nOffset + 2] = vec.z;
+	}
 }
