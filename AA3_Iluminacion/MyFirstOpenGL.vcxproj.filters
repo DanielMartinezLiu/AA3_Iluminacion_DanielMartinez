@@ -77,13 +77,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="MyFirstVertexShader.glsl">
+    <None Include="VertexShader.glsl">
       <Filter>Shaders\Vertex Shader</Filter>
     </None>
-    <None Include="MyFirstGeometryShader.glsl">
+    <None Include="GeometryShader.glsl">
       <Filter>Shaders\Geometry Shader</Filter>
     </None>
-    <None Include="MyFirstFragmentShader.glsl">
+    <None Include="FragmentShader.glsl">
       <Filter>Shaders\Fragment Shader</Filter>
     </None>
   </ItemGroup>

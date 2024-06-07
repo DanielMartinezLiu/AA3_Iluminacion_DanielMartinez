@@ -37,9 +37,9 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="MyFirstFragmentShader.glsl" />
-    <None Include="MyFirstGeometryShader.glsl" />
-    <None Include="MyFirstVertexShader.glsl" />
+    <None Include="FragmentShader.glsl" />
+    <None Include="GeometryShader.glsl" />
+    <None Include="VertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />

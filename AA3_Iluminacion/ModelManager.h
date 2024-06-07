@@ -19,6 +19,7 @@ private:
 	ModelManager& operator =(const ModelManager&) = delete;
 
 	std::vector<Model> models;
+
 public:
 	inline static ModelManager& Instance()
 	{
@@ -26,9 +27,14 @@ public:
 		return manager;
 	}
 	
+	std::vector<float> vertices;
+	std::vector<float> textureCoordinates;
+	std::vector<float> vertexNormals;
+
 	void LoadAllModels();
 	static Model LoadOBJModel(const std::string& filePath);
 
+	static void CalculateAverageNormals(unsigned int* indices, unsigned int indiceCount, float* vertices, unsigned int verticeCount, unsigned int vLength, unsigned int normalOffset);
 
 	inline Model GetModel(int _modelId) { return models[_modelId]; }
 
