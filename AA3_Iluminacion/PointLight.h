@@ -18,7 +18,7 @@ public:
 	void Update() override;
 	void Render() override;
 
-private:
+protected:
 	GLfloat constant;
 	GLfloat linear;
 	GLfloat exponent;

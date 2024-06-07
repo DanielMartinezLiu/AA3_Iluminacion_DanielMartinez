@@ -65,3 +65,16 @@ void GameObject::SetPointLights(PointLight* pLight, unsigned int lightCount)
 	}
 }
 
+void GameObject::SetSpotLights(SpotLight* sLight, unsigned int lightCount)
+{
+	if (lightCount > MAX_SPOT_LIGHTS)
+		lightCount = MAX_SPOT_LIGHTS;
+
+	glUniform1i(glGetUniformLocation(program, "spotLightCount"), lightCount);
+
+	for (size_t i = 0; i < lightCount; i++)
+	{
+		sLight[i].UseSpotLight(program, i);
+	}
+}
+

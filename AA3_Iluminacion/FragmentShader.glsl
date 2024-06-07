@@ -19,12 +19,19 @@ struct PointLight {
     float exponent;
 };
 
+struct SpotLight {
+    PointLight pointBase;
+    vec3 direction;
+    float edge;
+};
+
 struct Material {
     float specularIntensity;
     float shininess;
 };
 
 const int MAX_POINT_LIGHTS = 3;
+const int MAX_SPOT_LIGHTS = 3;
 
 uniform vec2 windowSize;
 
@@ -35,9 +42,11 @@ uniform vec4 baseColor;
 uniform vec3 eyePosition;
 
 uniform int pointLightCount;
+uniform int spotLightCount;
 
 uniform DirectionalLight directionalLight;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
+uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 
 uniform Material material;
 
@@ -55,15 +64,13 @@ vec4 CalculateLightByDirection(Light light, vec3 direction) {
 
     vec4 specularColor = vec4(0, 0, 0, 0);
 
-    if (diffuseFactor > 0.f)
-    {
+    if (diffuseFactor > 0.f) {
         vec3 fragToEye = normalize(eyePosition - fragmentPosition);
         vec3 reflectedVertex = normalize(reflect(direction, normalize(normalsFragmentShader)));
     
         float specularFactor = dot(fragToEye, reflectedVertex);
 
-        if (specularFactor > 0.f)
-        {
+        if (specularFactor > 0.f) {
             specularFactor = pow(specularFactor, material.shininess);
             specularColor = vec4(light.color * material.specularIntensity * specularFactor, 1.0);
         }
@@ -75,41 +82,63 @@ vec4 CalculateLightByDirection(Light light, vec3 direction) {
 vec4 CalculateDirectionalLight() {
     return CalculateLightByDirection(directionalLight.base, directionalLight.direction);
 }
+vec4 CalculatePointLight(PointLight pLight) {
+    vec3 direction = fragmentPosition - pLight.position;
+    float distance = length(direction);
+    direction = normalize(direction);
+
+    vec4 color = CalculateLightByDirection(pLight.base, direction);
+    float attenuation = pLight.exponent * distance * distance + 
+                        pLight.linear * distance +
+                        pLight.constant;
+
+    return color / attenuation;
+}
+
+vec4 CalculateSpotLight(SpotLight sLight) {
+    vec3 rayDirection = normalize(fragmentPosition - sLight.pointBase.position);
+    float slFactor = dot(rayDirection, sLight.direction);
+
+    if(slFactor > sLight.edge) {
+        vec4 color = CalculatePointLight(sLight.pointBase);
+        return color * (1.f - (1.f - slFactor) * (1.f / (1.f - sLight.edge)));
+    } else {
+        return vec4(0, 0, 0, 0);
+    }
+}
 
 vec4 CalculatePointLights() {
     vec4 totalColor = vec4(0, 0, 0, 0);
 
-    for (int i = 0; i < pointLightCount; i++)
-    {
-        vec3 direction = fragmentPosition - pointLights[i].position;
-        float distance = length(direction);
-        direction = normalize(direction);
-
-        vec4 color = CalculateLightByDirection(pointLights[i].base, direction);
-        float attenuation = pointLights[i].exponent * distance * distance + 
-                            pointLights[i].linear * distance +
-                            pointLights[i].constant;
-
-        totalColor += (color / attenuation);
+    for (int i = 0; i < pointLightCount; i++) {
+        totalColor += CalculatePointLight(pointLights[i]);
     }
 
     return totalColor;
 }
 
+vec4 CalculateSpotLights() {
+    vec4 totalColor = vec4(0, 0, 0, 0);
+
+    for (int i = 0; i < spotLightCount; i++) {
+        totalColor += CalculateSpotLight(spotLights[i]);
+    }
+
+    return totalColor;
+}
 void main() {
     vec2 adjustTexCoord = vec2(uvsFragmentShader.x, 1.0 - uvsFragmentShader.y);
 
     vec4 finalColor = CalculateDirectionalLight();
     finalColor += CalculatePointLights();
+    finalColor += CalculateSpotLights();
 
-    if (usingTexture == 1)
-    {
+    if (usingTexture == 1) {
         vec4 textureColor = texture(textureSampler, adjustTexCoord);
         
         fragColor = textureColor * finalColor;
     }
-    else
-    {
+    else {
         // Sumar el final color tambien
         fragColor = baseColor;
     }

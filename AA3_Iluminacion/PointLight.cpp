@@ -1,6 +1,6 @@
 #include "PointLight.h"
 
-PointLight::PointLight()
+PointLight::PointLight() : Light()
 {
 	transform.position = glm::vec3(0.f, 0.f, 0.f);
 	constant = 1.f;
