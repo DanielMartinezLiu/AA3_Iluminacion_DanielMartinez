@@ -10,6 +10,11 @@ GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation
 	program = _program;
 	textureId = _textureId;
 	light = _light;
+
+	pointLights = nullptr;
+	spotLights = nullptr;
+	pointLightCount = 0;
+	spotLightCount = 0;
 }
 
 void GameObject::Update()
@@ -37,6 +42,16 @@ void GameObject::Update()
 
 	material.UseMaterial(program);
 	light.UseDirectionalLight(program);
+
+	if (pointLights)
+	{
+		SetPointLights(pointLights, pointLightCount);
+	}
+
+	if (spotLights)
+	{
+		SetSpotLights(spotLights, spotLightCount);
+	}
 }
 
 void GameObject::Render()
@@ -54,6 +69,9 @@ void GameObject::Render()
 
 void GameObject::SetPointLights(PointLight* pLight, unsigned int lightCount)
 {
+	pointLights = pLight;
+	pointLightCount = lightCount;
+
 	if (lightCount > MAX_POINT_LIGHTS)
 		lightCount = MAX_POINT_LIGHTS;
 
@@ -67,6 +85,9 @@ void GameObject::SetPointLights(PointLight* pLight, unsigned int lightCount)
 
 void GameObject::SetSpotLights(SpotLight* sLight, unsigned int lightCount)
 {
+	spotLights = sLight;
+	spotLightCount = lightCount;
+
 	if (lightCount > MAX_SPOT_LIGHTS)
 		lightCount = MAX_SPOT_LIGHTS;
 

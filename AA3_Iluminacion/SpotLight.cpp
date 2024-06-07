@@ -54,13 +54,11 @@ void SpotLight::SetCamera(Camera* _camera)
 
 void SpotLight::Update()
 {
-	
-	printf("Camera Position : ", camera->GetCameraPosition(), " ------ " ,
-		"LightPosition : " , transform.position);
-	/*
-	transform.position = camera->GetCameraPosition();
-	direction = camera->GetCameraDirection();
-	*/
+	if (camera) {
+		direction = camera->GetCameraDirection();
+
+		transform.position = camera->GetCameraPosition();
+	}
 }
 
 void SpotLight::Render()

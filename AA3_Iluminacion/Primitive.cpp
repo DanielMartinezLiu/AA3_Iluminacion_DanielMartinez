@@ -95,3 +95,35 @@ void Primitive::Render()
 	//Desvinculamos VAO
 	glBindVertexArray(0);
 }
+
+void Primitive::SetPointLights(PointLight* pLight, unsigned int lightCount)
+{
+	pointLights = pLight;
+	pointLightCount = lightCount;
+
+	if (lightCount > MAX_POINT_LIGHTS)
+		lightCount = MAX_POINT_LIGHTS;
+
+	glUniform1i(glGetUniformLocation(program, "pointLightCount"), lightCount);
+
+	for (size_t i = 0; i < lightCount; i++)
+	{
+		pLight[i].UsePointLight(program, i);
+	}
+}
+
+void Primitive::SetSpotLights(SpotLight* sLight, unsigned int lightCount)
+{
+	spotLights = sLight;
+	spotLightCount = lightCount;
+
+	if (lightCount > MAX_SPOT_LIGHTS)
+		lightCount = MAX_SPOT_LIGHTS;
+
+	glUniform1i(glGetUniformLocation(program, "spotLightCount"), lightCount);
+
+	for (size_t i = 0; i < lightCount; i++)
+	{
+		sLight[i].UseSpotLight(program, i);
+	}
+}

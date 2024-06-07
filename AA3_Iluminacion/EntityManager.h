@@ -16,6 +16,9 @@ public:
 		return manager;
 	}
 
+	std::vector<PointLight*> pointLights;
+	std::vector<SpotLight*> spotLights;
+
 	void InitializeEntities();
 	void EntitiesUpdate();
 

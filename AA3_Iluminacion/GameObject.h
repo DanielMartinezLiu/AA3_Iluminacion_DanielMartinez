@@ -28,5 +28,11 @@ private:
 	Material material;
 	DirectionalLight light;
 
+	unsigned int pointLightCount;
+	PointLight* pointLights;
+
+	unsigned int spotLightCount;
+	SpotLight* spotLights;
+
 	int textureId;
 };

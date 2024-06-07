@@ -139,7 +139,6 @@ void main() {
         fragColor = textureColor * finalColor;
     }
     else {
-        // Sumar el final color tambien
-        fragColor = baseColor;
+        fragColor = baseColor * finalColor;
     }
 }
