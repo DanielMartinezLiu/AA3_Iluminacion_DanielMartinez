@@ -3,7 +3,12 @@
 #include "Model.h"
 #include "Entity.h"
 #include "GLManager.h"
+
 #include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
+
+#include "CommonValues.h"
 
 class GameObject : public Entity
 {
@@ -14,11 +19,20 @@ public:
 	void Update() override;
 	void Render() override;
 
+	void SetPointLights(PointLight* pLight, unsigned int lightCount);
+	void SetSpotLights(SpotLight* sLight, unsigned int lightCount);
+
 private:
 	glm::vec3 eyePosition;
 	Model model;
 	Material material;
 	DirectionalLight light;
+
+	unsigned int pointLightCount;
+	PointLight* pointLights;
+
+	unsigned int spotLightCount;
+	SpotLight* spotLights;
 
 	int textureId;
 };

@@ -7,7 +7,6 @@
 
 #define ENTITIES EntityManager::Instance()
 
-
 class EntityManager
 {
 public:
@@ -16,6 +15,9 @@ public:
 		static EntityManager manager;
 		return manager;
 	}
+
+	std::vector<PointLight*> pointLights;
+	std::vector<SpotLight*> spotLights;
 
 	void InitializeEntities();
 	void EntitiesUpdate();
