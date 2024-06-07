@@ -5,6 +5,7 @@
 
 #include "Entity.h"
 #include "GLManager.h"
+#include "Light.h"
 
 class Primitive : public Entity
 {
@@ -12,6 +13,7 @@ class Primitive : public Entity
 private:
 	std::vector<GLfloat> points;
 	glm::vec4 color;
+	Light light;
 
 	GLuint vao;
 	GLuint vbo;

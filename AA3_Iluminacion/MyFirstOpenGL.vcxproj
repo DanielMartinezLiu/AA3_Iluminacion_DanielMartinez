@@ -24,6 +24,7 @@
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="GLManager.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="Primitive.cpp" />
@@ -48,6 +49,7 @@
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="GLManager.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelManager.h" />
     <ClInclude Include="Primitive.h" />

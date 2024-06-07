@@ -15,5 +15,7 @@ public:
 
 private:
 	Model model;
+	Light light;
+
 	int textureId;
 };

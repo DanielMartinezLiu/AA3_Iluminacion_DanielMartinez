@@ -79,16 +79,16 @@ void GLManager::HandleMouse(GLFWwindow* window, double xPos, double yPos)
 
 	if (mouseWindow->mouseFirstMoved)
 	{
-		mouseWindow->lastX = xPos;
-		mouseWindow->lastY = yPos;
+		mouseWindow->lastX = (GLfloat)xPos;
+		mouseWindow->lastY = (GLfloat)yPos;
 		mouseWindow->mouseFirstMoved = false;
 	}
 
-	mouseWindow->xChange = xPos - mouseWindow->lastX;
-	mouseWindow->yChange = mouseWindow->lastY - yPos;
+	mouseWindow->xChange = (GLfloat)xPos - mouseWindow->lastX;
+	mouseWindow->yChange = mouseWindow->lastY - (GLfloat)yPos;
 
-	mouseWindow->lastX = xPos;
-	mouseWindow->lastY = yPos;
+	mouseWindow->lastX = (GLfloat)xPos;
+	mouseWindow->lastY = (GLfloat)yPos;
 }
 
 void GLManager::HandleKeys(GLFWwindow* window, int key, int code, int action, int mode)

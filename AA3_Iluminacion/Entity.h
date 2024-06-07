@@ -1,6 +1,8 @@
 #pragma once
+#include <GL/glew.h>
+
 #include "Transform.h" 
-#include "Light.h"
+
 class Entity 
 {
 public:
@@ -11,6 +13,5 @@ public:
 
 protected:
 	GLuint program;
-	Light light;
 };
 

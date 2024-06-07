@@ -1,12 +1,8 @@
 #pragma once
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm.hpp>
-
+#include "Entity.h"
 #include "GLManager.h"
 #include "TimeManager.h"
-#include "Entity.h"
 
 
 class Camera : public Entity
