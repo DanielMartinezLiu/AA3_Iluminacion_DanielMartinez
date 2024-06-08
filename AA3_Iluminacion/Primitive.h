@@ -25,20 +25,20 @@ private:
 	Material material;
 	DirectionalLight light;
 
+	unsigned int directionalLightCount;
+	DirectionalLight* directionalLights;
+
 	unsigned int pointLightCount;
 	PointLight* pointLights;
 
 	unsigned int spotLightCount;
 	SpotLight* spotLights;
 public:
-	Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color, DirectionalLight _light);
+	Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color);
 
 	void InitPrimitive();
 
 	void Update() override;
 	void Render() override;
-
-	void SetPointLights(PointLight* pLight, unsigned int lightCount);
-	void SetSpotLights(SpotLight* sLight, unsigned int lightCount);
 };
 

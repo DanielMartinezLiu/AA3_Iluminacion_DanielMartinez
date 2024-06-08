@@ -1,10 +1,9 @@
 #include "Primitive.h"
 
-Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color, DirectionalLight _light)
+Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color)
 {
 	program = _program;
 	transform = Transform(_position, _rotation, _scale);
-	light = _light;
 	color = _color;
 
 	points = {
@@ -82,7 +81,6 @@ void Primitive::Update()
 	glUniform4f(glGetUniformLocation(program, "baseColor"), color.x, color.y, color.z, color.w);
 	glUniform1i(glGetUniformLocation(program, "usingTexture"), 0);
 
-	light.UseDirectionalLight(program);
 }
 
 void Primitive::Render()
@@ -94,36 +92,4 @@ void Primitive::Render()
 
 	//Desvinculamos VAO
 	glBindVertexArray(0);
-}
-
-void Primitive::SetPointLights(PointLight* pLight, unsigned int lightCount)
-{
-	pointLights = pLight;
-	pointLightCount = lightCount;
-
-	if (lightCount > MAX_POINT_LIGHTS)
-		lightCount = MAX_POINT_LIGHTS;
-
-	glUniform1i(glGetUniformLocation(program, "pointLightCount"), lightCount);
-
-	for (size_t i = 0; i < lightCount; i++)
-	{
-		pLight[i].UsePointLight(program, i);
-	}
-}
-
-void Primitive::SetSpotLights(SpotLight* sLight, unsigned int lightCount)
-{
-	spotLights = sLight;
-	spotLightCount = lightCount;
-
-	if (lightCount > MAX_SPOT_LIGHTS)
-		lightCount = MAX_SPOT_LIGHTS;
-
-	glUniform1i(glGetUniformLocation(program, "spotLightCount"), lightCount);
-
-	for (size_t i = 0; i < lightCount; i++)
-	{
-		sLight[i].UseSpotLight(program, i);
-	}
 }
