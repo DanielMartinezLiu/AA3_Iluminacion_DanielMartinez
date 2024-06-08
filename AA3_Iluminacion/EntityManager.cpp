@@ -4,25 +4,26 @@ void EntityManager::InitializeEntities()
 {
 	
 	pointLights.push_back(new PointLight(
-		1.f, 1.f, 1.f,			//Color
-		7.5f, 3.5f,				//Intensity
-		0.f, 0.2f, 0.f,			//Position
-		0.3f, 0.2f, 0.1f		//Lights constants
+		1.f, 1.f, 1.f,							//Color
+		7.5f, 3.5f,								//Intensity
+		0.f, 0.2f, 0.f,							//Position
+		0.3f, 0.2f, 0.1f,						//Lights constants
+		7.5f, glm::two_pi<float>() / 20.0f, 0.f // Orbit
 	));
 
 	spotLights.push_back(new SpotLight(
-		1.f, 1.f, 1.f,			//Color
-		1.0f, 1.f,				//Intensity
-		0.f, 0.f, 0.f,			//Position
-		0.f, -1.f, 0.f,			//Direction
-		1.f, 0.2f, 0.032f,		//Lights constants
-		15.f					//Radius
+		1.f, 1.f, 1.f,							//Color
+		1.0f, 1.f,								//Intensity
+		0.f, 0.f, 0.f,							//Position
+		0.f, -1.f, 0.f,							//Direction
+		1.f, 0.2f, 0.032f,						//Lights constants
+		15.f									//Radius
 	));
 
 	directionalLights.push_back(new DirectionalLight(
-		1.f, 1.f, 1.f,			//Color
-		0.2f, 0.5f,				//Intensity
-		1.f, 1.f, 0.f			//Direction
+		1.f, 1.f, 1.f,							//Color
+		0.2f, 0.5f,								//Intensity
+		1.f, 1.f, 0.f							//Direction
 	));
 
 	Material shinyMaterial = Material(1.0f, 32);
@@ -61,8 +62,7 @@ void EntityManager::InitializeEntities()
 		glm::vec3(10.f, 1.f, 10.f), 
 		glm::vec4(0.2f, 0.1f, 0.f, 1.f), 
 		camera->GetCameraPosition(),
-		shinyMaterial,
-		0.f, false
+		shinyMaterial
 	);
 	ground->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
 	ground->SetPointLights(*pointLights.data(), pointLights.size());
@@ -78,7 +78,7 @@ void EntityManager::InitializeEntities()
 		glm::vec4(1.f, 1.f, 0.f, 1.f),
 		camera->GetCameraPosition(),
 		shinyMaterial,
-		0.f, true
+		7.5f, glm::two_pi<float>() / 20.0f, 0.f, true
 	);
 	entities.push_back(sun);
 
@@ -90,7 +90,7 @@ void EntityManager::InitializeEntities()
 		glm::vec4(1.f, 1.f, 1.f, 1.f),
 		camera->GetCameraPosition(),
 		shinyMaterial,
-		180.f, true
+		7.5f, glm::two_pi<float>() / 20.0f, 180.f, true
 	);
 
 	entities.push_back(moon);

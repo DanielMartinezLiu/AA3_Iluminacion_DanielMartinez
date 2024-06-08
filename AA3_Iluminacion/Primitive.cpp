@@ -1,14 +1,55 @@
 #include "Primitive.h"
 
-Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color, glm::vec3 _eyePosition, Material _material, GLfloat _angle, bool _orbitObject)
+Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color, glm::vec3 _eyePosition, Material _material)
 {
 	program = _program;
 	transform = Transform(_position, _rotation, _scale);
 	color = _color;
 	eyePosition = _eyePosition;
 	material = _material;
-	orbitObject = _orbitObject;
-	angle = _angle;
+
+	points = {
+				-1.f, +1.f, -1.f,
+				+1.f, +1.f, -1.f,
+				-1.f, -1.f, -1.f,
+				+1.f, -1.f, -1.f,
+				+1.f, -1.f, +1.f,
+				+1.f, +1.f, -1.f,
+				+1.f, +1.f, +1.f,
+				-1.f, +1.f, -1.f,
+				-1.f, +1.f, +1.f,
+				-1.f, -1.f, -1.f,
+				-1.f, -1.f, +1.f,
+				+1.f, -1.f, +1.f,
+				-1.f, +1.f, +1.f,
+				+1.f, +1.f, +1.f
+	};
+
+	directionalLights = nullptr;
+	pointLights = nullptr;
+	spotLights = nullptr;
+
+	directionalLightCount = 0;
+	pointLightCount = 0;
+	spotLightCount = 0;
+
+	orbitObject = false;
+	angle = 0.f;
+	center = glm::vec3(0.f, -1.f, 0.f);
+	radius = 7.5f;
+	speed = glm::two_pi<float>() / 20.0f;
+
+	InitPrimitive();
+}
+
+Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color, glm::vec3 _eyePosition, Material _material, GLfloat _radius, GLfloat _speed, GLfloat _angle, bool _orbitObject)
+{
+	program = _program;
+	transform = Transform(_position, _rotation, _scale);
+	color = _color;
+	eyePosition = _eyePosition;
+	material = _material;
+
 
 	points = {
 				-1.f, +1.f, -1.f,
@@ -36,8 +77,10 @@ Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, 
 	spotLightCount = 0;
 
 	center = glm::vec3(0.f, -1.f, 0.f);
-	radius = 7.5f;
-	speed = glm::two_pi<float>() / 20.0f;
+	radius = _radius;
+	speed = _speed;
+	angle = _angle;
+	orbitObject = _orbitObject;
 
 	InitPrimitive();
 }

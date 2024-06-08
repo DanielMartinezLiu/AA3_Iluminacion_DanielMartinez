@@ -31,6 +31,23 @@ PointLight::PointLight(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _amb
 	angle = 0.f;
 }
 
+PointLight::PointLight(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _ambientIntensity, GLfloat _diffuseIntensity, GLfloat _xPos, GLfloat _yPos, GLfloat _zPos, GLfloat _constant, GLfloat _linear, GLfloat _exponent, GLfloat _radius, GLfloat _speed, GLfloat _angle)
+	: Light(_red, _green, _blue, _ambientIntensity, _diffuseIntensity) {
+	transform.position = glm::vec3(_xPos, _yPos, _zPos);
+
+	ambientIntesityOriginal = _ambientIntensity;
+	diffuseIntesityOriginal = _diffuseIntensity;
+
+	constant = _constant;
+	linear = _linear;
+	exponent = _exponent;
+
+	center = glm::vec3(0.f, -1.f, 0.f);
+	radius = _radius;
+	speed = _speed;
+	angle = _angle;
+}
+
 void PointLight::UsePointLight(GLuint program, int index)
 {
 	char uniformName[128];
@@ -80,7 +97,7 @@ void PointLight::Update()
 
 	color = glm::mix(moonColor, sunColor, blendFactor);
 
-	float intensityFactor = glm::mix(0.85f, 1.0f, blendFactor);
+	float intensityFactor = glm::mix(0.15f, 1.0f, blendFactor);
 	ambientIntensity = ambientIntesityOriginal * intensityFactor;
 	diffuseIntensity = diffuseIntesityOriginal * intensityFactor;
 }
