@@ -16,6 +16,7 @@ public:
 		return manager;
 	}
 
+	std::vector<DirectionalLight*> directionalLights;
 	std::vector<PointLight*> pointLights;
 	std::vector<SpotLight*> spotLights;
 

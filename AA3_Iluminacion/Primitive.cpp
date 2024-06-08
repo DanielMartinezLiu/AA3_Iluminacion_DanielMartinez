@@ -1,11 +1,14 @@
 #include "Primitive.h"
 
-Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color, DirectionalLight _light)
+Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color, glm::vec3 _eyePosition, Material _material, GLfloat _angle, bool _orbitObject)
 {
 	program = _program;
 	transform = Transform(_position, _rotation, _scale);
-	light = _light;
 	color = _color;
+	eyePosition = _eyePosition;
+	material = _material;
+	orbitObject = _orbitObject;
+	angle = _angle;
 
 	points = {
 				-1.f, +1.f, -1.f,
@@ -23,6 +26,18 @@ Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, 
 				-1.f, +1.f, +1.f,
 				+1.f, +1.f, +1.f
 	};
+
+	directionalLights = nullptr;
+	pointLights = nullptr;
+	spotLights = nullptr;
+
+	directionalLightCount = 0;
+	pointLightCount = 0;
+	spotLightCount = 0;
+
+	center = glm::vec3(0.f, -1.f, 0.f);
+	radius = 7.5f;
+	speed = glm::two_pi<float>() / 20.0f;
 
 	InitPrimitive();
 }
@@ -64,12 +79,16 @@ void Primitive::Update()
 {
 	glUseProgram(program);
 
+	if (orbitObject)
+	{
+		UpdateOrbit();
+	}
+
 	glm::mat4 translationMatrix = Transform::GenerateTranslationMatrix(transform.position);
 	glm::mat4 rotationMatrix = Transform::GenerateRotationMatrix(transform.rotation, transform.rotation.x);
 	rotationMatrix *= Transform::GenerateRotationMatrix(transform.rotation, transform.rotation.y);
 	rotationMatrix *= Transform::GenerateRotationMatrix(transform.rotation, transform.rotation.z);
 	glm::mat4 scaleMatrix = Transform::GenerateScaleMatrix(transform.scale);
-
 
 	//Asignar valores iniciales al programa
 	glUniform2f(glGetUniformLocation(program, "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -82,7 +101,24 @@ void Primitive::Update()
 	glUniform4f(glGetUniformLocation(program, "baseColor"), color.x, color.y, color.z, color.w);
 	glUniform1i(glGetUniformLocation(program, "usingTexture"), 0);
 
-	light.UseDirectionalLight(program);
+	glUniform3f(glGetUniformLocation(program, "eyePosition"), eyePosition.x, eyePosition.y, eyePosition.z);
+
+	material.UseMaterial(program);
+
+	if (directionalLightCount > 0 && directionalLights)
+	{
+		SetDirectionalLights(directionalLights, directionalLightCount);
+	}
+
+	if (pointLightCount > 0 && pointLights)
+	{
+		SetPointLights(pointLights, pointLightCount);
+	}
+
+	if (spotLightCount > 0 && spotLights)
+	{
+		SetSpotLights(spotLights, spotLightCount);
+	}
 }
 
 void Primitive::Render()
@@ -96,6 +132,34 @@ void Primitive::Render()
 	glBindVertexArray(0);
 }
 
+void Primitive::UpdateOrbit()
+{
+	angle += speed * TIME_MANAGER.GetDeltaTime();
+
+	if (angle > glm::two_pi<float>()) {
+		angle -= glm::two_pi<float>();
+	}
+
+	transform.position.x = center.x + radius * cos(angle);
+	transform.position.y = center.y + radius * sin(angle);
+	transform.position.z = 0;
+}
+
+void Primitive::SetDirectionalLights(DirectionalLight* dLight, unsigned int lightCount)
+{
+	directionalLights = dLight;
+	directionalLightCount = lightCount;
+
+	if (lightCount > MAX_POINT_LIGHTS)
+		lightCount = MAX_POINT_LIGHTS;
+
+	glUniform1i(glGetUniformLocation(program, "directionalLightCount"), lightCount);
+
+	for (size_t i = 0; i < lightCount; i++)
+	{
+		dLight[i].UseDirectionalLight(program, i);
+	}
+}
 void Primitive::SetPointLights(PointLight* pLight, unsigned int lightCount)
 {
 	pointLights = pLight;

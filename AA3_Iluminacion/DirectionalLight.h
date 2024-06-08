@@ -12,7 +12,7 @@ public:
 		GLfloat _xDirection, GLfloat _yDirection, GLfloat _zDirection
 	);
 
-	void UseDirectionalLight(GLuint program);
+	void UseDirectionalLight(GLuint program, int index);
 
 	~DirectionalLight();
 

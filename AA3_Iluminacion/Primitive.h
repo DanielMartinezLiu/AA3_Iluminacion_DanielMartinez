@@ -14,8 +14,23 @@
 
 class Primitive : public Entity
 {
+public:
+	Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color, glm::vec3 _eyePosition, Material _material, GLfloat _angle, bool _orbitObject);
+
+	void InitPrimitive();
+
+	void Update() override;
+	void Render() override;
+
+	void UpdateOrbit();
+
+	void SetDirectionalLights(DirectionalLight* dLight, unsigned int lightCount);
+	void SetPointLights(PointLight* pLight, unsigned int lightCount);
+	void SetSpotLights(SpotLight* sLight, unsigned int lightCount);
 
 private:
+	glm::vec3 eyePosition;
+
 	std::vector<GLfloat> points;
 	glm::vec4 color;
 
@@ -23,22 +38,21 @@ private:
 	GLuint vbo;
 
 	Material material;
-	DirectionalLight light;
+
+	unsigned int directionalLightCount;
+	DirectionalLight* directionalLights;
 
 	unsigned int pointLightCount;
 	PointLight* pointLights;
 
 	unsigned int spotLightCount;
 	SpotLight* spotLights;
-public:
-	Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color, DirectionalLight _light);
 
-	void InitPrimitive();
-
-	void Update() override;
-	void Render() override;
-
-	void SetPointLights(PointLight* pLight, unsigned int lightCount);
-	void SetSpotLights(SpotLight* sLight, unsigned int lightCount);
+	glm::vec3 center;
+	float radius;
+	float speed;
+	float angle;
+	
+	bool orbitObject;
 };
 

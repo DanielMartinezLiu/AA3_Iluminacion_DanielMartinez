@@ -1,6 +1,6 @@
 #include "GameObject.h"
 
-GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec3 _eyePosition, Model _model, Material _material, DirectionalLight _light, int _textureId)
+GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec3 _eyePosition, Model _model, Material _material, int _textureId)
 {
 	transform = Transform(_position, _rotation, _scale);
 
@@ -9,10 +9,11 @@ GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation
 	material = _material;
 	program = _program;
 	textureId = _textureId;
-	light = _light;
 
+	directionalLights = nullptr;
 	pointLights = nullptr;
 	spotLights = nullptr;
+	directionalLightCount = 0;
 	pointLightCount = 0;
 	spotLightCount = 0;
 }
@@ -41,14 +42,18 @@ void GameObject::Update()
 	glUniform3f(glGetUniformLocation(program, "eyePosition"), eyePosition.x, eyePosition.y, eyePosition.z);
 
 	material.UseMaterial(program);
-	light.UseDirectionalLight(program);
 
-	if (pointLights)
+	if (directionalLightCount > 0 && directionalLights)
+	{
+		SetDirectionalLights(directionalLights, directionalLightCount);
+	}
+
+	if (pointLightCount > 0 && pointLights)
 	{
 		SetPointLights(pointLights, pointLightCount);
 	}
 
-	if (spotLights)
+	if (spotLightCount > 0 && spotLights)
 	{
 		SetSpotLights(spotLights, spotLightCount);
 	}
@@ -66,7 +71,21 @@ void GameObject::Render()
 	//Desvinculamos VAO
 	glBindVertexArray(0);
 }
+void GameObject::SetDirectionalLights(DirectionalLight* dLight, unsigned int lightCount)
+{
+	directionalLights = dLight;
+	directionalLightCount = lightCount;
 
+	if (lightCount > MAX_DIRECTIONAL_LIGHTS)
+		lightCount = MAX_DIRECTIONAL_LIGHTS;
+
+	glUniform1i(glGetUniformLocation(program, "directionalLightCount"), lightCount);
+
+	for (size_t i = 0; i < lightCount; i++)
+	{
+		dLight[i].UseDirectionalLight(program, i);
+	}
+}
 void GameObject::SetPointLights(PointLight* pLight, unsigned int lightCount)
 {
 	pointLights = pLight;

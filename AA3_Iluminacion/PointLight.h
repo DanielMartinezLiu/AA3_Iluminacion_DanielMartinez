@@ -22,5 +22,17 @@ protected:
 	GLfloat constant;
 	GLfloat linear;
 	GLfloat exponent;
+
+private:
+	glm::vec3 center;
+
+	float radius;
+	float speed;
+	float angle;
+
+	float ambientIntesityOriginal;
+	float diffuseIntesityOriginal;
+
+	float deltaTime;
 };
 
