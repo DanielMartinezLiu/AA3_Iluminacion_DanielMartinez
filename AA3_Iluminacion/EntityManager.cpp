@@ -13,7 +13,7 @@ void EntityManager::InitializeEntities()
 
 	spotLights.push_back(new SpotLight(
 		1.f, 1.f, 1.f,							//Color
-		1.0f, 1.f,								//Intensity
+		3.f, 1.f,								//Intensity
 		0.f, 0.f, 0.f,							//Position
 		0.f, -1.f, 0.f,							//Direction
 		1.f, 0.2f, 0.032f,						//Lights constants
@@ -38,9 +38,9 @@ void EntityManager::InitializeEntities()
 
 	spotLights[0]->SetCamera(camera);
 
-	GameObject* modelOne = new GameObject(
+	GameObject* troll = new GameObject(
 		PROGRAMS.GetCompiledPrograms()[0], 
-		glm::vec3(0.f, 0.f, 0.f), 
+		glm::vec3(0.f, 0.5f, 0.f), 
 		glm::vec3(0.f, 180.f, 0.f), 
 		glm::vec3(1.f), 
 		camera->GetCameraPosition(), 
@@ -49,21 +49,56 @@ void EntityManager::InitializeEntities()
 		0
 	);
 
-	modelOne->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
-	modelOne->SetPointLights(*pointLights.data(), pointLights.size());
-	modelOne->SetSpotLights(*spotLights.data(), spotLights.size());
+	troll->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
+	troll->SetPointLights(*pointLights.data(), pointLights.size());
+	troll->SetSpotLights(*spotLights.data(), spotLights.size());
 
-	entities.push_back(modelOne);
+	entities.push_back(troll);
+
+	GameObject* stone = new GameObject(
+		PROGRAMS.GetCompiledPrograms()[0],
+		glm::vec3(-3.f, 0.5f, 3.f),
+		glm::vec3(0.f, 180.f, 0.f),
+		glm::vec3(0.5f),
+		camera->GetCameraPosition(),
+		MODELS.GetModel(1),
+		shinyMaterial,
+		1
+	);
+
+	stone->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
+	stone->SetPointLights(*pointLights.data(), pointLights.size());
+	stone->SetSpotLights(*spotLights.data(), spotLights.size());
+
+	entities.push_back(stone);
+
+	GameObject* house = new GameObject(
+		PROGRAMS.GetCompiledPrograms()[0],
+		glm::vec3(3.f, 0.5f, 3.f),
+		glm::vec3(0.f, 180.f, 0.f),
+		glm::vec3(0.5f),
+		camera->GetCameraPosition(),
+		MODELS.GetModel(2),
+		shinyMaterial,
+		2
+	);
+
+	house->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
+	house->SetPointLights(*pointLights.data(), pointLights.size());
+	house->SetSpotLights(*spotLights.data(), spotLights.size());
+
+	entities.push_back(house);
 
 	Primitive* ground = new Primitive(
 		PROGRAMS.GetCompiledPrograms()[0], 
-		glm::vec3(0.f, -1.f, 0.f), 
+		glm::vec3(0.f, -0.5f, 0.f), 
 		glm::vec3(0.f, 1.f, 0.f), 
 		glm::vec3(10.f, 1.f, 10.f), 
 		glm::vec4(0.2f, 0.1f, 0.f, 1.f), 
 		camera->GetCameraPosition(),
 		shinyMaterial
 	);
+
 	ground->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
 	ground->SetPointLights(*pointLights.data(), pointLights.size());
 	ground->SetSpotLights(*spotLights.data(), spotLights.size());
@@ -74,7 +109,7 @@ void EntityManager::InitializeEntities()
 		PROGRAMS.GetCompiledPrograms()[0],
 		glm::vec3(0.f, 0.f, 0.f),
 		glm::vec3(0.f, 1.f, 0.f),
-		glm::vec3(1.f, 1.f, 1.f),
+		glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec4(1.f, 1.f, 0.f, 1.f),
 		camera->GetCameraPosition(),
 		shinyMaterial,
@@ -86,11 +121,11 @@ void EntityManager::InitializeEntities()
 		PROGRAMS.GetCompiledPrograms()[0],
 		glm::vec3(0.f, 0.f, 0.f),
 		glm::vec3(0.f, 1.f, 0.f),
-		glm::vec3(1.f, 1.f, 1.f),
+		glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec4(1.f, 1.f, 1.f, 1.f),
 		camera->GetCameraPosition(),
 		shinyMaterial,
-		7.5f, glm::two_pi<float>() / 20.0f, 180.f, true
+		7.5f, glm::two_pi<float>() / 20.0f, glm::pi<float>(), true
 	);
 
 	entities.push_back(moon);

@@ -25,7 +25,7 @@ PointLight::PointLight(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _amb
 	linear = _linear;
 	exponent = _exponent;
 
-	center = glm::vec3(0.f, -1.f, 0.f);
+	center = glm::vec3(0.f);
 	radius = 7.5f;
 	speed = glm::two_pi<float>() / 20.f;
 	angle = 0.f;
@@ -42,7 +42,7 @@ PointLight::PointLight(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _amb
 	linear = _linear;
 	exponent = _exponent;
 
-	center = glm::vec3(0.f, -1.f, 0.f);
+	center = glm::vec3(0.f);
 	radius = _radius;
 	speed = _speed;
 	angle = _angle;

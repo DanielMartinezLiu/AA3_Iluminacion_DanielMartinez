@@ -35,7 +35,7 @@ Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, 
 
 	orbitObject = false;
 	angle = 0.f;
-	center = glm::vec3(0.f, -1.f, 0.f);
+	center = glm::vec3(0.f);
 	radius = 7.5f;
 	speed = glm::two_pi<float>() / 20.0f;
 
@@ -76,7 +76,7 @@ Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, 
 	pointLightCount = 0;
 	spotLightCount = 0;
 
-	center = glm::vec3(0.f, -1.f, 0.f);
+	center = glm::vec3(0.f);
 	radius = _radius;
 	speed = _speed;
 	angle = _angle;
@@ -183,9 +183,15 @@ void Primitive::UpdateOrbit()
 		angle -= glm::two_pi<float>();
 	}
 
+	std::cout << "Angle: " << angle << std::endl;
+
 	transform.position.x = center.x + radius * cos(angle);
 	transform.position.y = center.y + radius * sin(angle);
 	transform.position.z = 0;
+
+	std::cout << "Position: (" << transform.position.x << ", " << transform.position.y << ", " << transform.position.z << ")" << std::endl;
+	std::cout << "Center: (" << center.x << ", " << center.y << ")" << std::endl;
+	std::cout << "Radius: " << radius << std::endl;
 }
 
 void Primitive::SetDirectionalLights(DirectionalLight* dLight, unsigned int lightCount)

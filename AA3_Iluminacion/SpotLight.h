@@ -22,14 +22,20 @@ public:
 	void Update() override;
 	void Render() override;
 
+	void KeyControl(bool* keys);
+
 	~SpotLight();
 
 private:
 	Camera* camera;
 	glm::vec3 direction;
 
+	GLfloat ambientIntensityOriginal;
+
 	GLfloat edge;
 	GLfloat procEdge;
-
+	
+	bool lightActive;
+	bool isPressing;
 };
 
