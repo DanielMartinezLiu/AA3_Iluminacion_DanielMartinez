@@ -107,7 +107,6 @@ vec4 CalculateSpotLight(SpotLight sLight) {
         vec4 color = CalculatePointLight(sLight.pointBase);
 
         return (color * (1.f - (1.f - slFactor) * (1.f / (1.f - sLight.edge))));
-
     } else {
         return vec4(0, 0, 0, 0);
     }
