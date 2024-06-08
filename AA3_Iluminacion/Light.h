@@ -3,21 +3,23 @@
 #include <GLFW/glfw3.h>
 #include <glm.hpp>
 
+#include "Material.h"
+#include "Camera.h"
+
 class Light
 {
 public:
 	Light();
 
-	Light(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _ambientIntensity,
-		GLfloat _xDirection, GLfloat _yDirection, GLfloat _zDirection, GLfloat _diffuseIntensity);
-
-	void UseLight(GLuint program);
-	
+	Light(GLfloat _red, GLfloat _green, GLfloat _blue, 
+		GLfloat _ambientIntensity, GLfloat _diffuseIntensity);
 	~Light();
-private: 
+
+protected: 
+	glm::vec3 eyePosition;
+
 	glm::vec3 color;
 	GLfloat ambientIntensity;
-
-	glm::vec3 direction;
 	GLfloat diffuseIntensity;
+
 };

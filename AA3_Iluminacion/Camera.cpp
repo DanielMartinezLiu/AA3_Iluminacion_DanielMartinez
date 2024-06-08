@@ -72,15 +72,22 @@ glm::vec3 Camera::GetCameraDirection()
 
 void Camera::Update()
 {
+	// Actualizamos los controles
 	KeyControl(GLM.GetsKeys(), TIME_MANAGER.GetDeltaTime());
 	MouseControl(GLM.GetXChange(), GLM.GetYChange());
 
+	// Calcula las componentes de la dirección 'front' utilizando los ángulos 'yaw' y 'pitch'
 	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 	front.y = sin(glm::radians(pitch));
 	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+
+	// Normalizo el vector para asegurar que tenga una longitud de 1
 	front = glm::normalize(front);
 
+	// Calcula el vector como el producto cruzado entre 'front' y 'worldUp'.
 	right = glm::normalize(glm::cross(front, worldUp));
+
+	// Calcula el vector como el producto cruzado entre 'right' y 'front'.
 	up = glm::normalize(glm::cross(right, front));
 
 	Render();
@@ -88,10 +95,13 @@ void Camera::Update()
 
 void Camera::Render()
 {
+	// Calcula la matriz de vista utilizando la posición actual de la cámara 
 	glm::mat4 viewMatrix = glm::lookAt(transform.position, transform.position + front, up);
 
+	// Calcula la matriz de proyección de perspectiva con el campo de visión, la relación de aspecto de la ventana
 	glm::mat4 projectionMatrix = glm::perspective(glm::radians(fFov), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, fNear, fFar);
 
+	// Itera sobre todos los programas compilados
 	for (GLuint program : PROGRAMS.GetCompiledPrograms())
 	{
 		glUseProgram(program);

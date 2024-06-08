@@ -46,7 +46,7 @@ void main() {
 		TEXTURES.LoadTextures();
 
 		//Definimos color para limpiar el buffer de color
-		glClearColor(0.f, 0.f, 0.f, 1.f);
+		GLM.ClearColor();
 
 		//Definimos modo de dibujo para cada cara
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -54,16 +54,16 @@ void main() {
 		//Generamos el game loop
 		while (GLM.IsRunnig()) {
 
-			TIME_MANAGER.Update();
-
 			//Pulleamos los eventos (botones, teclas, mouse...)
 			glfwPollEvents();
 
 			//Limpiamos los buffers
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+			//Actualizamos las entidades
 			ENTITIES.EntitiesUpdate();
 
+			//Cambiamos los buffers
 			GLM.ChangeBuffers();
 		}
 

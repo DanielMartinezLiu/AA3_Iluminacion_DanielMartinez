@@ -7,7 +7,6 @@
 
 #define ENTITIES EntityManager::Instance()
 
-
 class EntityManager
 {
 public:
@@ -19,11 +18,21 @@ public:
 
 	void InitializeEntities();
 	void EntitiesUpdate();
-
 private:
 	EntityManager() = default;
 	EntityManager(const EntityManager&) = delete;
 	EntityManager& operator =(const EntityManager&) = delete;
+
 	std::vector<Entity*> entities;
+
+	std::vector<glm::vec3> spawnPoints;
+	std::vector<bool> usedSpawnPoint;
+
+	std::vector<DirectionalLight*> directionalLights;
+	std::vector<PointLight*> pointLights;
+	std::vector<SpotLight*> spotLights;
+	
+	void InitializeSpawnPoints();
+	glm::vec3 GetRandomUnusedPosition();
 };
 

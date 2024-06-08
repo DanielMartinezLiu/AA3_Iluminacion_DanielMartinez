@@ -20,16 +20,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="GLManager.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelManager.cpp" />
+    <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="ProgramManager.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="Stb.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
@@ -37,22 +41,27 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="MyFirstFragmentShader.glsl" />
-    <None Include="MyFirstGeometryShader.glsl" />
-    <None Include="MyFirstVertexShader.glsl" />
+    <None Include="FragmentShader.glsl" />
+    <None Include="GeometryShader.glsl" />
+    <None Include="VertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CommonValues.h" />
+    <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="GLManager.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelManager.h" />
+    <ClInclude Include="PointLight.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="Program.h" />
     <ClInclude Include="ProgramManager.h" />
+    <ClInclude Include="SpotLight.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="TimeManager.h" />
