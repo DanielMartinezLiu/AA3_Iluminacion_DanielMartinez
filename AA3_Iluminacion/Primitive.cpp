@@ -1,10 +1,12 @@
 #include "Primitive.h"
 
-Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color)
+Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec4 _color, glm::vec3 _eyePosition, Material _material)
 {
 	program = _program;
 	transform = Transform(_position, _rotation, _scale);
 	color = _color;
+	eyePosition = _eyePosition;
+	material = _material;
 
 	points = {
 				-1.f, +1.f, -1.f,
@@ -22,6 +24,13 @@ Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, 
 				-1.f, +1.f, +1.f,
 				+1.f, +1.f, +1.f
 	};
+
+	directionalLights = nullptr;
+	pointLights = nullptr;
+	spotLights = nullptr;
+	directionalLightCount = 0;
+	pointLightCount = 0;
+	spotLightCount = 0;
 
 	InitPrimitive();
 }
@@ -57,6 +66,23 @@ void Primitive::InitPrimitive()
 
 	//Desvinculamos VAO
 	glBindVertexArray(0);
+
+	material.UseMaterial(program);
+
+	if (directionalLightCount > 0 && directionalLights)
+	{
+		SetDirectionalLights(directionalLights, directionalLightCount);
+	}
+
+	if (pointLights)
+	{
+		SetPointLights(pointLights, pointLightCount);
+	}
+
+	if (spotLights)
+	{
+		SetSpotLights(spotLights, spotLightCount);
+	}
 }
 
 void Primitive::Update()
@@ -81,6 +107,24 @@ void Primitive::Update()
 	glUniform4f(glGetUniformLocation(program, "baseColor"), color.x, color.y, color.z, color.w);
 	glUniform1i(glGetUniformLocation(program, "usingTexture"), 0);
 
+	glUniform3f(glGetUniformLocation(program, "eyePosition"), eyePosition.x, eyePosition.y, eyePosition.z);
+
+	material.UseMaterial(program);
+
+	if (directionalLightCount > 0 && directionalLights)
+	{
+		SetDirectionalLights(directionalLights, directionalLightCount);
+	}
+
+	if (pointLights)
+	{
+		SetPointLights(pointLights, pointLightCount);
+	}
+
+	if (spotLights)
+	{
+		SetSpotLights(spotLights, spotLightCount);
+	}
 }
 
 void Primitive::Render()
@@ -92,4 +136,51 @@ void Primitive::Render()
 
 	//Desvinculamos VAO
 	glBindVertexArray(0);
+}
+
+void Primitive::SetDirectionalLights(DirectionalLight* dLight, unsigned int lightCount)
+{
+	directionalLights = dLight;
+	directionalLightCount = lightCount;
+
+	if (lightCount > MAX_POINT_LIGHTS)
+		lightCount = MAX_POINT_LIGHTS;
+
+	glUniform1i(glGetUniformLocation(program, "directionalLightCount"), lightCount);
+
+	for (size_t i = 0; i < lightCount; i++)
+	{
+		dLight[i].UseDirectionalLight(program, i);
+	}
+}
+void Primitive::SetPointLights(PointLight* pLight, unsigned int lightCount)
+{
+	pointLights = pLight;
+	pointLightCount = lightCount;
+
+	if (lightCount > MAX_POINT_LIGHTS)
+		lightCount = MAX_POINT_LIGHTS;
+
+	glUniform1i(glGetUniformLocation(program, "pointLightCount"), lightCount);
+
+	for (size_t i = 0; i < lightCount; i++)
+	{
+		pLight[i].UsePointLight(program, i);
+	}
+}
+
+void Primitive::SetSpotLights(SpotLight* sLight, unsigned int lightCount)
+{
+	spotLights = sLight;
+	spotLightCount = lightCount;
+
+	if (lightCount > MAX_SPOT_LIGHTS)
+		lightCount = MAX_SPOT_LIGHTS;
+
+	glUniform1i(glGetUniformLocation(program, "spotLightCount"), lightCount);
+
+	for (size_t i = 0; i < lightCount; i++)
+	{
+		sLight[i].UseSpotLight(program, i);
+	}
 }

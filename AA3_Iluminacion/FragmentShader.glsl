@@ -74,11 +74,11 @@ vec4 CalculateLight(Light light, vec3 direction) {
 
         if (specularFactor > 0.f) {
             specularFactor = pow(specularFactor, material.shininess);
-            specularColor = vec4(light.color * material.specularIntensity * specularFactor, 1.0);
+            specularColor = vec4(light.color * material.specularIntensity * specularFactor, 1.0f);
         }
     }
     
-    return ambientColor + diffuseColor + specularColor;
+    return (ambientColor + diffuseColor + specularColor);
 }
 
 vec4 CalculateDirectionalLight(DirectionalLight dLight) {
@@ -96,7 +96,7 @@ vec4 CalculatePointLight(PointLight pLight) {
                         pLight.linear * distance +
                         pLight.constant;
 
-    return color / attenuation;
+    return (color / attenuation);
 }
 
 vec4 CalculateSpotLight(SpotLight sLight) {
@@ -105,7 +105,9 @@ vec4 CalculateSpotLight(SpotLight sLight) {
 
     if(slFactor > sLight.edge) {
         vec4 color = CalculatePointLight(sLight.pointBase);
-        return color * (1.f - (1.f - slFactor) * (1.f / (1.f - sLight.edge)));
+
+        return (color * (1.f - (1.f - slFactor) * (1.f / (1.f - sLight.edge))));
+
     } else {
         return vec4(0, 0, 0, 0);
     }

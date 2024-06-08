@@ -10,8 +10,10 @@ GameObject::GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation
 	program = _program;
 	textureId = _textureId;
 
+	directionalLights = nullptr;
 	pointLights = nullptr;
 	spotLights = nullptr;
+	directionalLightCount = 0;
 	pointLightCount = 0;
 	spotLightCount = 0;
 }
@@ -81,7 +83,7 @@ void GameObject::SetDirectionalLights(DirectionalLight* dLight, unsigned int lig
 
 	for (size_t i = 0; i < lightCount; i++)
 	{
-		directionalLights[i].UseDirectionalLight(program, i);
+		dLight[i].UseDirectionalLight(program, i);
 	}
 }
 void GameObject::SetPointLights(PointLight* pLight, unsigned int lightCount)
