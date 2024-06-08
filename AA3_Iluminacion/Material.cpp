@@ -14,6 +14,7 @@ Material::Material(GLfloat _specularIntensity, GLfloat _shininess)
 
 void Material::UseMaterial(GLuint program)
 {
+	// Pasamos los uniforms al fragment shader
 	glUniform1f(glGetUniformLocation(program, "material.specularIntensity"), specularIntensity);
 	glUniform1f(glGetUniformLocation(program, "material.shininess"), shininess);
 }

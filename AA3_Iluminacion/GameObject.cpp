@@ -41,18 +41,22 @@ void GameObject::Update()
 
 	glUniform3f(glGetUniformLocation(program, "eyePosition"), eyePosition.x, eyePosition.y, eyePosition.z);
 
+	// Usar el material del objeto
 	material.UseMaterial(program);
 
+	// Pasar la luz direccional
 	if (directionalLightCount > 0 && directionalLights)
 	{
 		SetDirectionalLights(directionalLights, directionalLightCount);
 	}
 
+	// Pasar la point light
 	if (pointLightCount > 0 && pointLights)
 	{
 		SetPointLights(pointLights, pointLightCount);
 	}
 
+	// Pasar la spot light
 	if (spotLightCount > 0 && spotLights)
 	{
 		SetSpotLights(spotLights, spotLightCount);
@@ -61,7 +65,6 @@ void GameObject::Update()
 
 void GameObject::Render()
 {
-
 	//Vinculo su VAO para ser usado
 	glBindVertexArray(model.VAO);
 
@@ -73,14 +76,18 @@ void GameObject::Render()
 }
 void GameObject::SetDirectionalLights(DirectionalLight* dLight, unsigned int lightCount)
 {
+	// Asignación de las luces direccionales y su cantidad
 	directionalLights = dLight;
 	directionalLightCount = lightCount;
 
-	if (lightCount > MAX_DIRECTIONAL_LIGHTS)
-		lightCount = MAX_DIRECTIONAL_LIGHTS;
+	// Limitación de la cantidad de luces si excede el límite máximo
+	if (lightCount > MAX_POINT_LIGHTS)
+		lightCount = MAX_POINT_LIGHTS;
 
+	// Envío del número actual de luces direccionales
 	glUniform1i(glGetUniformLocation(program, "directionalLightCount"), lightCount);
 
+	// Configuración de cada luz direccional
 	for (size_t i = 0; i < lightCount; i++)
 	{
 		dLight[i].UseDirectionalLight(program, i);
@@ -88,14 +95,18 @@ void GameObject::SetDirectionalLights(DirectionalLight* dLight, unsigned int lig
 }
 void GameObject::SetPointLights(PointLight* pLight, unsigned int lightCount)
 {
+	// Asignación de las point light y su cantidad
 	pointLights = pLight;
 	pointLightCount = lightCount;
 
+	// Limitación de la cantidad de luces si excede el límite máximo
 	if (lightCount > MAX_POINT_LIGHTS)
 		lightCount = MAX_POINT_LIGHTS;
 
+	// Envío del número actual las point light
 	glUniform1i(glGetUniformLocation(program, "pointLightCount"), lightCount);
 
+	// Configuración de cada point light
 	for (size_t i = 0; i < lightCount; i++)
 	{
 		pLight[i].UsePointLight(program, i);
@@ -104,17 +115,20 @@ void GameObject::SetPointLights(PointLight* pLight, unsigned int lightCount)
 
 void GameObject::SetSpotLights(SpotLight* sLight, unsigned int lightCount)
 {
+	// Asignación de las luces de foco y su cantidad
 	spotLights = sLight;
 	spotLightCount = lightCount;
 
+	// Limitación de la cantidad de luces si excede el límite máximo
 	if (lightCount > MAX_SPOT_LIGHTS)
 		lightCount = MAX_SPOT_LIGHTS;
 
+	// Envío del número actual las spot light
 	glUniform1i(glGetUniformLocation(program, "spotLightCount"), lightCount);
 
+	// Configuración de cada spot light
 	for (size_t i = 0; i < lightCount; i++)
 	{
 		sLight[i].UseSpotLight(program, i);
 	}
 }
-

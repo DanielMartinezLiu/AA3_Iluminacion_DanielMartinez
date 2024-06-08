@@ -75,37 +75,47 @@ GLfloat GLManager::GetYChange()
 
 void GLManager::HandleMouse(GLFWwindow* window, double xPos, double yPos)
 {
+	// Obtener el puntero al objeto GLManager asociado a la ventana de GLFW
 	GLManager* mouseWindow = static_cast<GLManager*>(glfwGetWindowUserPointer(window));
 
+	// Verificar si es el primer movimiento del ratón
 	if (mouseWindow->mouseFirstMoved)
 	{
+		// Si es el primer movimiento, establecer las coordenadas del último movimiento como las actuales
 		mouseWindow->lastX = (GLfloat)xPos;
 		mouseWindow->lastY = (GLfloat)yPos;
 		mouseWindow->mouseFirstMoved = false;
 	}
 
+	// Calcular el cambio en las coordenadas del ratón desde el último fotograma
 	mouseWindow->xChange = (GLfloat)xPos - mouseWindow->lastX;
 	mouseWindow->yChange = mouseWindow->lastY - (GLfloat)yPos;
 
+	// Actualizar las coordenadas del último movimiento del ratón
 	mouseWindow->lastX = (GLfloat)xPos;
 	mouseWindow->lastY = (GLfloat)yPos;
 }
 
 void GLManager::HandleKeys(GLFWwindow* window, int key, int code, int action, int mode)
 {
+	// Obtener el puntero al objeto GLManager asociado a la ventana GLFW
 	GLManager* keyWindow = static_cast<GLManager*>(glfwGetWindowUserPointer(window));
 
+	// Verificar si se presionó la tecla Escape y si es así, cerrar la ventana
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
+	// Verificar si la tecla presionada está dentro del rango de teclas válidas (0 a 1023)
 	if (key >= 0 && key < 1024)
 	{
+		// Si la acción es presionar, se marca la tecla como presionada
 		if (action == GLFW_PRESS)
 		{
 			keyWindow->keys[key] = true;
 		}
+		// Si la acción es liberar, se marca la tecla como no presionada
 		else if (action == GLFW_RELEASE)
 		{
 			keyWindow->keys[key] = false;

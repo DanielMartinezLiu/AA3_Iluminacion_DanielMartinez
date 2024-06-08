@@ -11,12 +11,10 @@ Light::Light()
 Light::Light(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _ambientIntensity,
 	GLfloat _diffuseIntensity)
 {
-
 	color = glm::vec3(_red, _green, _blue);
 	ambientIntensity = _ambientIntensity;
 
 	diffuseIntensity = _diffuseIntensity;
-
 }
 
 Light::~Light()
