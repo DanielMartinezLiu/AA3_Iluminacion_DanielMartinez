@@ -28,6 +28,7 @@ Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, 
 	directionalLights = nullptr;
 	pointLights = nullptr;
 	spotLights = nullptr;
+
 	directionalLightCount = 0;
 	pointLightCount = 0;
 	spotLightCount = 0;
@@ -66,23 +67,6 @@ void Primitive::InitPrimitive()
 
 	//Desvinculamos VAO
 	glBindVertexArray(0);
-
-	material.UseMaterial(program);
-
-	if (directionalLightCount > 0 && directionalLights)
-	{
-		SetDirectionalLights(directionalLights, directionalLightCount);
-	}
-
-	if (pointLights)
-	{
-		SetPointLights(pointLights, pointLightCount);
-	}
-
-	if (spotLights)
-	{
-		SetSpotLights(spotLights, spotLightCount);
-	}
 }
 
 void Primitive::Update()
@@ -116,12 +100,12 @@ void Primitive::Update()
 		SetDirectionalLights(directionalLights, directionalLightCount);
 	}
 
-	if (pointLights)
+	if (pointLightCount > 0 && pointLights)
 	{
 		SetPointLights(pointLights, pointLightCount);
 	}
 
-	if (spotLights)
+	if (spotLightCount > 0 && spotLights)
 	{
 		SetSpotLights(spotLights, spotLightCount);
 	}

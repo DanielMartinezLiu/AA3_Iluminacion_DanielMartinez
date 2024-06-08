@@ -15,6 +15,8 @@ public:
 
 	~PointLight();
 
+	void SetDeltaTime(float _deltaTime);
+
 	void Update() override;
 	void Render() override;
 
@@ -22,5 +24,13 @@ protected:
 	GLfloat constant;
 	GLfloat linear;
 	GLfloat exponent;
+
+private:
+	glm::vec3 center;
+	float radius;
+	float speed;
+	float angle;
+
+	float deltaTime;
 };
 

@@ -54,8 +54,6 @@ void main() {
 		//Generamos el game loop
 		while (GLM.IsRunnig()) {
 
-			TIME_MANAGER.Update();
-
 			//Pulleamos los eventos (botones, teclas, mouse...)
 			glfwPollEvents();
 

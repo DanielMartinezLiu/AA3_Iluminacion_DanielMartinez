@@ -48,12 +48,12 @@ void GameObject::Update()
 		SetDirectionalLights(directionalLights, directionalLightCount);
 	}
 
-	if (pointLights)
+	if (pointLightCount > 0 && pointLights)
 	{
 		SetPointLights(pointLights, pointLightCount);
 	}
 
-	if (spotLights)
+	if (spotLightCount > 0 && spotLights)
 	{
 		SetSpotLights(spotLights, spotLightCount);
 	}
@@ -76,8 +76,8 @@ void GameObject::SetDirectionalLights(DirectionalLight* dLight, unsigned int lig
 	directionalLights = dLight;
 	directionalLightCount = lightCount;
 
-	if (lightCount > MAX_POINT_LIGHTS)
-		lightCount = MAX_POINT_LIGHTS;
+	if (lightCount > MAX_DIRECTIONAL_LIGHTS)
+		lightCount = MAX_DIRECTIONAL_LIGHTS;
 
 	glUniform1i(glGetUniformLocation(program, "directionalLightCount"), lightCount);
 

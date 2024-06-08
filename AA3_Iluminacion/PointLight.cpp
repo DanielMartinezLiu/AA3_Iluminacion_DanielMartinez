@@ -3,17 +3,29 @@
 PointLight::PointLight() : Light()
 {
 	transform.position = glm::vec3(0.f, 0.f, 0.f);
+
 	constant = 1.f;
 	linear = 0.f;
 	exponent = 0.f;
+
+	center = glm::vec3(0.f);
+	radius = 7.5f;
+	speed = glm::two_pi<float>() / 20.f;
+	angle = 10.f;
 }
 
 PointLight::PointLight(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _ambientIntensity, GLfloat _diffuseIntensity, GLfloat _xPos, GLfloat _yPos, GLfloat _zPos, GLfloat _constant, GLfloat _linear, GLfloat _exponent)
 : Light(_red, _green, _blue, _ambientIntensity, _diffuseIntensity) {
 	transform.position = glm::vec3(_xPos, _yPos, _zPos);
+
 	constant = _constant;
 	linear = _linear;
 	exponent = _exponent;
+
+	center = glm::vec3(0.f);
+	radius = 7.5f;
+	speed = glm::two_pi<float>() / 20.f;
+	angle = 10.f;
 }
 
 void PointLight::UsePointLight(GLuint program, int index)
@@ -46,8 +58,33 @@ PointLight::~PointLight()
 {
 }
 
+void PointLight::SetDeltaTime(float _deltaTime)
+{
+	deltaTime = _deltaTime;
+}
+
 void PointLight::Update()
 {
+	angle += speed * deltaTime;
+
+	if (angle > glm::two_pi<float>()) {
+		angle -= glm::two_pi<float>();
+	}
+
+	transform.position.x = center.x + radius * cos(angle);
+	transform.position.y = center.y + radius * sin(angle);
+	transform.position.z = 0;
+
+	float blendFactor = (transform.position.y - center.y + radius) / (2.0f * radius);
+
+	glm::vec3 sunColor(1.0f, 1.0f, 0.0f);
+	glm::vec3 moonColor(0.0f, 0.0f, 1.0f);
+
+	color = glm::mix(moonColor, sunColor, blendFactor);
+
+	float intensityFactor = glm::mix(0.85f, 1.0f, blendFactor);
+	ambientIntensity = 7.5 * intensityFactor;
+	diffuseIntensity = 3.5 * intensityFactor;
 }
 
 void PointLight::Render()

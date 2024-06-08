@@ -92,8 +92,8 @@ vec4 CalculatePointLight(PointLight pLight) {
     direction = normalize(direction);
 
     vec4 color = CalculateLight(pLight.base, direction);
-    float attenuation = pLight.exponent * distance * distance + 
-                        pLight.linear * distance +
+    float attenuation = (pLight.exponent * distance * distance) + 
+                        (pLight.linear * distance) +
                         pLight.constant;
 
     return (color / attenuation);
@@ -127,7 +127,8 @@ vec4 CalculatePointLights() {
     vec4 totalColor = vec4(0, 0, 0, 0);
 
     for (int i = 0; i < pointLightCount; i++) {
-        totalColor += CalculatePointLight(pointLights[i]);
+        vec4 lightColor = CalculatePointLight(pointLights[i]);
+        totalColor += lightColor;
     }
 
     return totalColor;
