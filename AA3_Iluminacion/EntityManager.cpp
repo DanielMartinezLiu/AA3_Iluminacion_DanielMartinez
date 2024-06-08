@@ -2,7 +2,8 @@
 
 void EntityManager::InitializeEntities()
 {
-	
+	InitializeSpawnPoints();
+
 	pointLights.push_back(new PointLight(
 		1.f, 1.f, 1.f,							//Color
 		7.5f, 3.5f,								//Intensity
@@ -40,7 +41,7 @@ void EntityManager::InitializeEntities()
 
 	GameObject* troll = new GameObject(
 		PROGRAMS.GetCompiledPrograms()[0], 
-		glm::vec3(0.f, 0.5f, 0.f), 
+		GetRandomUnusedPosition(),
 		glm::vec3(0.f, 180.f, 0.f), 
 		glm::vec3(1.f), 
 		camera->GetCameraPosition(), 
@@ -57,7 +58,7 @@ void EntityManager::InitializeEntities()
 
 	GameObject* stone = new GameObject(
 		PROGRAMS.GetCompiledPrograms()[0],
-		glm::vec3(-3.f, 0.5f, 3.f),
+		GetRandomUnusedPosition(),
 		glm::vec3(0.f, 180.f, 0.f),
 		glm::vec3(0.5f),
 		camera->GetCameraPosition(),
@@ -74,7 +75,7 @@ void EntityManager::InitializeEntities()
 
 	GameObject* house = new GameObject(
 		PROGRAMS.GetCompiledPrograms()[0],
-		glm::vec3(3.f, 0.5f, 3.f),
+		GetRandomUnusedPosition(),
 		glm::vec3(0.f, 180.f, 0.f),
 		glm::vec3(0.5f),
 		camera->GetCameraPosition(),
@@ -131,6 +132,38 @@ void EntityManager::InitializeEntities()
 	entities.push_back(moon);
 
 	entities.push_back(camera);
+}
+void EntityManager::InitializeSpawnPoints()
+{
+	spawnPoints.push_back(glm::vec3(4.f, 0.5f, -1.f));
+	spawnPoints.push_back(glm::vec3(2.f, 0.5f, -1.f));
+	spawnPoints.push_back(glm::vec3(-4.f, 0.5f, 7.f));
+	spawnPoints.push_back(glm::vec3(-1.f, 0.5f, -1.f));
+	spawnPoints.push_back(glm::vec3(0.f, 0.5f, 0.f));
+	spawnPoints.push_back(glm::vec3(1.f, 0.5f, 1.f));
+	spawnPoints.push_back(glm::vec3(-2.f, 0.5f, 2.f));
+	spawnPoints.push_back(glm::vec3(3.f, 0.5f, -6.f));
+	spawnPoints.push_back(glm::vec3(-7.f, 0.5f, -1.f));
+
+	for (int i = 0; i < spawnPoints.size(); i++)
+	{
+		usedSpawnPoint.push_back(false);
+	}
+}
+glm::vec3 EntityManager::GetRandomUnusedPosition()
+{
+	int randomPosId = rand() % spawnPoints.size();
+	glm::vec3 randomPos;
+
+	if (usedSpawnPoint[randomPosId])
+		randomPos = GetRandomUnusedPosition();
+	else
+	{
+		randomPos = spawnPoints[randomPosId];
+		usedSpawnPoint[randomPosId] = true;
+	}
+
+	return randomPos;
 }
 
 void EntityManager::EntitiesUpdate()
