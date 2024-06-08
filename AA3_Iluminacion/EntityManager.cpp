@@ -59,16 +59,41 @@ void EntityManager::InitializeEntities()
 		glm::vec3(0.f, -1.f, 0.f), 
 		glm::vec3(0.f, 1.f, 0.f), 
 		glm::vec3(10.f, 1.f, 10.f), 
-		glm::vec4(0.7f, 0.5f, 0.f, 1.f), 
+		glm::vec4(0.2f, 0.1f, 0.f, 1.f), 
 		camera->GetCameraPosition(),
-		shinyMaterial
+		shinyMaterial,
+		0.f, false
 	);
-
 	ground->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
 	ground->SetPointLights(*pointLights.data(), pointLights.size());
 	ground->SetSpotLights(*spotLights.data(), spotLights.size());
 
 	entities.push_back(ground);
+
+	Primitive* sun = new Primitive(
+		PROGRAMS.GetCompiledPrograms()[0],
+		glm::vec3(0.f, 0.f, 0.f),
+		glm::vec3(0.f, 1.f, 0.f),
+		glm::vec3(1.f, 1.f, 1.f),
+		glm::vec4(1.f, 1.f, 0.f, 1.f),
+		camera->GetCameraPosition(),
+		shinyMaterial,
+		0.f, true
+	);
+	entities.push_back(sun);
+
+	Primitive* moon = new Primitive(
+		PROGRAMS.GetCompiledPrograms()[0],
+		glm::vec3(0.f, 0.f, 0.f),
+		glm::vec3(0.f, 1.f, 0.f),
+		glm::vec3(1.f, 1.f, 1.f),
+		glm::vec4(1.f, 1.f, 1.f, 1.f),
+		camera->GetCameraPosition(),
+		shinyMaterial,
+		180.f, true
+	);
+
+	entities.push_back(moon);
 
 	entities.push_back(camera);
 }
@@ -84,7 +109,6 @@ void EntityManager::EntitiesUpdate()
 		item->Render();
 	}
 	for (PointLight* light : pointLights) {
-		light->SetDeltaTime(deltaTime);
 		light->Update();
 	}
 
