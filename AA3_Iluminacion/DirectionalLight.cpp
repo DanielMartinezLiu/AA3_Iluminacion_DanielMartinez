@@ -14,26 +14,19 @@ DirectionalLight::DirectionalLight(
 	direction = glm::vec3(_xDirection, _yDirection, _zDirection);
 }
 
-void DirectionalLight::UseDirectionalLight(GLuint program, int index)
+void DirectionalLight::UseDirectionalLight(GLuint program)
 {
-	// Crea un nombre de uniforme dinámico basado en el índice 'index' de la luz direccional
-	char uniformName[128];
-
 	// Configura el color base de la luz direccional
-	snprintf(uniformName, sizeof(uniformName), "directionalLights[%d].base.color", index);
-	glUniform3f(glGetUniformLocation(program, uniformName), color.x, color.y, color.z);
+	glUniform3f(glGetUniformLocation(program, "directionalColor"), color.x, color.y, color.z);
 
 	// Configura la intensidad ambiental de la luz direccional
-	snprintf(uniformName, sizeof(uniformName), "directionalLights[%d].base.ambientIntensity", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), ambientIntensity);
+	glUniform1f(glGetUniformLocation(program, "directionalAmbientIntensity"), ambientIntensity);
 
 	// Configura la intensidad difusa de la luz direccional
-	snprintf(uniformName, sizeof(uniformName), "directionalLights[%d].base.diffuseIntensity", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), diffuseIntensity);
+	glUniform1f(glGetUniformLocation(program, "directionalDiffuseIntensity"), diffuseIntensity);
 
 	// Configura la dirección de la luz direccional
-	snprintf(uniformName, sizeof(uniformName), "directionalLights[%d].direction", index);
-	glUniform3f(glGetUniformLocation(program, uniformName), direction.x, direction.y, direction.z);
+	glUniform3f(glGetUniformLocation(program, "directionalDirection"), direction.x, direction.y, direction.z);
 }
 
 DirectionalLight::~DirectionalLight()

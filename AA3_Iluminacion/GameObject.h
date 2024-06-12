@@ -16,26 +16,19 @@ public:
 
 	GameObject(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale, glm::vec3 _eyePosition, Model _model, Material _material, int _textureId);
 
+	void SetLights(DirectionalLight* dLight, PointLight* pLight, SpotLight* sLight);
+
 	void Update() override;
 	void Render() override;
-
-	void SetDirectionalLights(DirectionalLight* dLight, unsigned int lightCount);
-	void SetPointLights(PointLight* pLight, unsigned int lightCount);
-	void SetSpotLights(SpotLight* sLight, unsigned int lightCount);
 
 private:
 	glm::vec3 eyePosition;
 	Model model;
 	Material material;
 
-	unsigned int directionalLightCount;
-	DirectionalLight* directionalLights;
-
-	unsigned int pointLightCount;
-	PointLight* pointLights;
-
-	unsigned int spotLightCount;
-	SpotLight* spotLights;
+	DirectionalLight* directionalLight;
+	PointLight* pointLight;
+	SpotLight* spotLight;
 
 	int textureId;
 };

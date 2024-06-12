@@ -4,29 +4,30 @@ void EntityManager::InitializeEntities()
 {
 	InitializeSpawnPoints();
 
-	pointLights.push_back(new PointLight(
-		1.f, 1.f, 1.f,							//Color
-		7.5f, 3.5f,								//Intensity
-		0.f, 0.2f, 0.f,							//Position
-		0.3f, 0.2f, 0.1f,						//Lights constants
-		7.5f, glm::two_pi<float>() / 20.0f, 0.f // Orbit
-	));
+	pointLight = new PointLight(
+		1.f, 1.f, 1.f,								//Color
+		7.5f, 3.5f,									//Intensity
+		0.f, 0.2f, 0.f,								//Position
+		0.3f, 0.2f, 0.1f,							//Lights constants
+		7.5f, glm::two_pi<float>() / 20.0f, 0.f		// Orbit
+	);
 
-	spotLights.push_back(new SpotLight(
-		1.f, 1.f, 1.f,							//Color
-		3.f, 1.f,								//Intensity
-		0.f, 0.f, 0.f,							//Position
-		0.f, -1.f, 0.f,							//Direction
-		1.f, 0.2f, 0.032f,						//Lights constants
-		15.f									//Radius
-	));
+	spotLight = new SpotLight(
+		1.f, 1.f, 1.f,								//Color
+		3.f, 1.f,									//Intensity
+		0.f, 0.f, 0.f,								//Position
+		0.f, -1.f, 0.f,								//Direction
+		1.f, 0.2f, 0.032f,							//Lights constants
+		15.f										//Radius
+	);
 
-	directionalLights.push_back(new DirectionalLight(
-		1.f, 1.f, 1.f,							//Color
-		0.2f, 0.5f,								//Intensity
-		1.f, 1.f, 0.f							//Direction
-	));
+	directionalLight = new DirectionalLight(
+		1.f, 1.f, 1.f,								//Color
+		0.2f, 0.5f,									//Intensity
+		1.f, 1.f, 0.f								//Direction
+	);
 
+	// Creamos diferente Tipos de materiales
 	Material shinyMaterial = Material(1.0f, 32);
 	Material dullMaterial = Material(0.3f, 4);
 
@@ -39,7 +40,7 @@ void EntityManager::InitializeEntities()
 	);
 
 	// Ponemos la camara en la spotlight para que le siga la posicion
-	spotLights[0]->SetCamera(camera);
+	spotLight->SetCamera(camera);
 
 	// Inicializamos el troll
 	GameObject* troll = new GameObject(
@@ -54,9 +55,7 @@ void EntityManager::InitializeEntities()
 	);
 
 	// Ponemos que le afecten todas las luces en el troll
-	troll->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
-	troll->SetPointLights(*pointLights.data(), pointLights.size());
-	troll->SetSpotLights(*spotLights.data(), spotLights.size());
+	troll->SetLights(directionalLight, pointLight, spotLight);
 
 	// Ponemos el troll dentro del vector de entidades
 	entities.push_back(troll);
@@ -74,9 +73,7 @@ void EntityManager::InitializeEntities()
 	);
 
 	// Ponemos que le afecten todas las luces en la piedra
-	stone->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
-	stone->SetPointLights(*pointLights.data(), pointLights.size());
-	stone->SetSpotLights(*spotLights.data(), spotLights.size());
+	stone->SetLights(directionalLight, pointLight, spotLight);
 
 	// Ponemos la piedra dentro del vector de entidades
 	entities.push_back(stone);
@@ -94,9 +91,7 @@ void EntityManager::InitializeEntities()
 	);
 
 	// Ponemos que le afecten todas las luces en la casa
-	house->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
-	house->SetPointLights(*pointLights.data(), pointLights.size());
-	house->SetSpotLights(*spotLights.data(), spotLights.size());
+	house->SetLights(directionalLight, pointLight, spotLight);
 
 	// Ponemos la casa dentro del vector de entidades
 	entities.push_back(house);
@@ -113,9 +108,7 @@ void EntityManager::InitializeEntities()
 	);
 
 	// Ponemos que le afecten todas las luces en el suelo
-	ground->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
-	ground->SetPointLights(*pointLights.data(), pointLights.size());
-	ground->SetSpotLights(*spotLights.data(), spotLights.size());
+	ground->SetLights(directionalLight, pointLight, spotLight);
 
 	// Ponemos el suelo dentro del vector de entidades
 	entities.push_back(ground);
@@ -203,14 +196,10 @@ void EntityManager::EntitiesUpdate()
 		item->Render();
 	}
 
-	// Hacemos un update para todas los puntos de luz
-	for (PointLight* light : pointLights) {
-		light->Update();
-	}
+	// Hacemos un update para el puntos de luz
+	pointLight->Update();
 
-	// Hacemos un update para todas los focos de luz
-	for (SpotLight* light : spotLights) {
-		light->Update();
-	}
+	// Hacemos un update para el focos de luz
+	spotLight->Update();
 }
 

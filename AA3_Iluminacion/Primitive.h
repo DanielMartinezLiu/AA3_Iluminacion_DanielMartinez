@@ -24,10 +24,7 @@ public:
 	void Render() override;
 
 	void UpdateOrbit();
-
-	void SetDirectionalLights(DirectionalLight* dLight, unsigned int lightCount);
-	void SetPointLights(PointLight* pLight, unsigned int lightCount);
-	void SetSpotLights(SpotLight* sLight, unsigned int lightCount);
+	void SetLights(DirectionalLight* dLight, PointLight* pLight, SpotLight* sLight);
 
 private:
 	glm::vec3 eyePosition;
@@ -40,14 +37,9 @@ private:
 
 	Material material;
 
-	unsigned int directionalLightCount;
-	DirectionalLight* directionalLights;
-
-	unsigned int pointLightCount;
-	PointLight* pointLights;
-
-	unsigned int spotLightCount;
-	SpotLight* spotLights;
+	DirectionalLight* directionalLight;
+	PointLight* pointLight;
+	SpotLight* spotLight;
 
 	glm::vec3 center;
 	float radius;

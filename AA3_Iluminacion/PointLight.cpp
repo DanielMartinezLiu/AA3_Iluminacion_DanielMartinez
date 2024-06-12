@@ -48,37 +48,28 @@ PointLight::PointLight(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _amb
 	angle = _angle;
 }
 
-void PointLight::UsePointLight(GLuint program, int index)
+void PointLight::UsePointLight(GLuint program)
 {
-	char uniformName[128];
-
 	// Configura el color base de la point light
-	snprintf(uniformName, sizeof(uniformName), "pointLights[%d].base.color", index);
-	glUniform3f(glGetUniformLocation(program, uniformName), color.x, color.y, color.z);
+	glUniform3f(glGetUniformLocation(program, "pointColor"), color.x, color.y, color.z);
 
 	// Configura la intensidad ambiental de la point light
-	snprintf(uniformName, sizeof(uniformName), "pointLights[%d].base.ambientIntensity", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), ambientIntensity);
+	glUniform1f(glGetUniformLocation(program, "pointAmbientIntensity"), ambientIntensity);
 
 	// Configura la intensidad difusa de la point light
-	snprintf(uniformName, sizeof(uniformName), "pointLights[%d].base.diffuseIntensity", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), diffuseIntensity);
+	glUniform1f(glGetUniformLocation(program, "pointDiffuseIntensity"), diffuseIntensity);
 
 	// Configura la posición de la point light
-	snprintf(uniformName, sizeof(uniformName), "pointLights[%d].position", index);
-	glUniform3f(glGetUniformLocation(program, uniformName), transform.position.x, transform.position.y, transform.position.z);
+	glUniform3f(glGetUniformLocation(program, "pointPosition"), transform.position.x, transform.position.y, transform.position.z);
 
 	// Configura el factor de atenuación constante de la point light
-	snprintf(uniformName, sizeof(uniformName), "pointLights[%d].constant", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), constant);
+	glUniform1f(glGetUniformLocation(program, "pointConstant"), constant);
 
 	// Configura el factor de atenuación lineal de la point light
-	snprintf(uniformName, sizeof(uniformName), "pointLights[%d].linear", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), linear);
+	glUniform1f(glGetUniformLocation(program, "pointLinear"), linear);
 
 	// Configura el factor de atenuación exponencial de la point light
-	snprintf(uniformName, sizeof(uniformName), "pointLights[%d].exponent", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), exponent);
+	glUniform1f(glGetUniformLocation(program, "pointExponent"), exponent);
 }
 
 PointLight::~PointLight()

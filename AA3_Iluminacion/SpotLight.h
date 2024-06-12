@@ -15,7 +15,7 @@ public:
 		GLfloat _constant, GLfloat _linear, GLfloat _exponent,
 		GLfloat _edge);
 
-	void UseSpotLight(GLuint program, int index);
+	void UseSpotLight(GLuint program);
 
 	void SetCamera(Camera* _camera);
 

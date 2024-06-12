@@ -19,7 +19,7 @@ public:
 		GLfloat _radius, GLfloat _speed, GLfloat _angle
 	);
 
-	void UsePointLight(GLuint program, int index);
+	void UsePointLight(GLuint program);
 
 	~PointLight();
 
