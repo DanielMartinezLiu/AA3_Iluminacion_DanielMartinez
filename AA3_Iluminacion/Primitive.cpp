@@ -46,7 +46,6 @@ Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, 
 	eyePosition = _eyePosition;
 	material = _material;
 
-
 	points = {
 				-1.f, +1.f, -1.f,
 				+1.f, +1.f, -1.f,

@@ -2,29 +2,29 @@
 
 uniform vec3 directionalColor;
 uniform float directionalAmbientIntensity;
-uniform float directionalDiffuseIntensity;
 uniform vec3 directionalDirection;
 
 uniform vec3 pointColor;
 uniform float pointAmbientIntensity;
-uniform float pointDiffuseIntensity;
 uniform vec3 pointPosition;
 uniform float pointConstant;
 uniform float pointLinear;
-uniform float pointExponent;
+uniform float pointQuadratic;
 
 uniform vec3 spotColor;
 uniform float spotAmbientIntensity;
-uniform float spotDiffuseIntensity;
 uniform vec3 spotPosition;
 uniform float spotConstant;
 uniform float spotLinear;
-uniform float spotExponent;
+uniform float spotQuadratic;
 uniform vec3 spotDirection;
-uniform float spotEdge;
+uniform float spotCutOff;
+uniform float spotOuterCutOff;
 
+uniform float materialDiffuseIntensity;
 uniform float materialSpecularIntensity;
 uniform float materialShininess;
+uniform vec3 cameraPosition;
 
 uniform vec2 windowSize;
 
@@ -32,75 +32,128 @@ uniform int usingTexture;
 uniform sampler2D textureSampler;
 uniform vec4 baseColor;
 
-uniform vec3 eyePosition;
-
 in vec2 uvsFragmentShader;
 in vec3 normalsFragmentShader;
 in vec3 fragmentPosition;
 
 out vec4 fragColor;
 
-vec4 CalculateLight(vec3 color, float ambient, float diffuse, vec3 direction) {
-    vec4 ambientColor = vec4(color, 1.f) * ambient;
-
-    float diffuseFactor = max(dot(normalize(normalsFragmentShader), normalize(direction)), 0.f);
-    vec4 diffuseColor = vec4(color * diffuse * diffuseFactor, 1.0f);
-
-    vec4 specularColor = vec4(0, 0, 0, 0);
-
-    if (diffuseFactor > 0.f) {
-        vec3 fragToEye = normalize(eyePosition - fragmentPosition);
-        vec3 reflectedVertex = normalize(reflect(direction, normalize(normalsFragmentShader)));
-    
-        float specularFactor = dot(fragToEye, reflectedVertex);
-
-        if (specularFactor > 0.f) {
-            specularFactor = pow(specularFactor, materialShininess);
-            specularColor = vec4(color * materialSpecularIntensity * specularFactor, 1.0f);
-        }
-    }
-    
-    return (ambientColor + diffuseColor + specularColor);
+// Calculamos la luz ambiental
+// Ia = Ka * La 
+// Intensidad Ambiental = Factor Ambiental * Color Ambiental
+vec3 CalculateAmbientIntensity(vec3 objectColor, float ambientFactor) {
+    return (objectColor * ambientFactor);
 }
 
+// Calculamos la luz difusa
+// Id = Kd * (L * N) * Ld 
+// Intensidad difusa = Factor difuso * (Vector Luz * Vector Normal del plano) * Color Difuso
+vec3 CalculateDiffuseIntensity(vec3 color, vec3 normal, vec3 lightDirection, float diffuseFactor) {
+    vec3 diffuseColor = vec3(0, 0, 0);
 
-vec4 CalculateLightTypes()
+    // Calcula el dot product entre la normal y la direcion de la luz
+    // Con la funcion max(), nos aseguramos de que la luz difusa nunca sea negativa.
+    float intensity = max(dot(normalize(normal), normalize(lightDirection)), 0.f);
+
+    return (color * intensity * diffuseFactor);
+}
+
+// Calculamos la luz especular
+// Is = Ks * (V * r)^shininess * Ls 
+// Intensidad especular = Factor Especular * (Vector visor(camara) * Vector reflector)^Shininnes(depende del material) * Color Especular
+vec3 CalculateSpecularIntensity(vec3 color, vec3 normal, vec3 lightDirection, vec3 viewPosition, float specularFactor, float shininess) {
+    vec3 specularColor = vec3(0, 0, 0);
+
+    normal = normalize(normal);
+    lightDirection = normalize(lightDirection);
+    viewPosition = normalize(viewPosition);
+
+    vec3 reflectionDirection = reflect(-lightDirection, normal);
+    float reflectionIntensity = dot(viewPosition, reflectionDirection);
+
+    if (reflectionIntensity > 0.f) {
+        reflectionIntensity = pow(reflectionIntensity, shininess);
+        specularColor = color * specularFactor * reflectionIntensity;
+    }
+
+    return specularColor;
+}
+
+// Calculamos la iluminacion de Phong
+// La * Ka + Ld * (Kd * (L * n)) + Ls * (Ks * (V * r)^alpha)
+vec3 CalculatePhongLighting(vec3 color, float ambient, vec3 direction) {
+    vec3 ambientLight = CalculateAmbientIntensity(color, ambient);
+    vec3 diffuseLight = CalculateDiffuseIntensity(color, normalsFragmentShader, direction, materialDiffuseIntensity);
+    vec3 specularLight = CalculateSpecularIntensity(color, normalsFragmentShader, direction, cameraPosition, materialSpecularIntensity, materialShininess);
+
+    return (ambientLight + diffuseLight + specularLight);
+}
+
+// Calculamos la attenuacion, que la luz afecte dependiendo de la distancia de donde este al plano
+// 1.0f / Kc + Kl * d + Kq * d^2
+float CalculateAttenuation(float constant, float linear, float quadratic, float distance)
 {
-    vec4 finalColor = vec4(0, 0, 0, 0);
+    return (1.0f / (constant + linear * distance + quadratic * distance * distance));
+}
+
+// Calculamos la luz direccional
+vec3 CalculateDirectionalLight()
+{
+    return CalculatePhongLighting(directionalColor, directionalAmbientIntensity, -directionalDirection);
+}
+
+// Calculamos la luz puntual usando la atenuacion.
+vec3 CalculatePointLight()
+{
+    vec3 pointDirection = pointPosition - fragmentPosition;
+
+    vec3 pointColor = CalculatePhongLighting(pointColor, pointAmbientIntensity, normalize(pointDirection));
+    float attenuation = CalculateAttenuation(pointConstant, pointLinear, pointQuadratic, length(pointDirection));
+
+    return (pointColor * attenuation);
+}
+
+// Calculamos la luz foco
+vec3 CalculateSpotLight()
+{
+    // Soft edges: I = angle - tetha / epsilon
+    // angle = el angulo de corte que especifica el radio del foco.
+    // tetha = el angulo entre el vector que apunta al fragment hacia la fuente de luz y la direccion que el foco esta apuntando. Tendria que ser menor que el angulo
+    // epsilon = es el coseno entre la diferencia del cono interior al cono exterior. 
+    // I = angle - (vector del fragment * vector del foco) / cos(cono interior) - cos(cono exterior) 
+
+    vec3 spotDir = spotPosition - fragmentPosition;
+
+    float tetha = dot(normalize(spotDir), normalize(-spotDirection));
+
+    float cosInnerCutOff = cos(radians(spotCutOff));
+    float cosOuterCutOff = cos(radians(spotOuterCutOff));
+
+    float epsilon = cosInnerCutOff - cosOuterCutOff;
+    float intensity = clamp((tetha - cosOuterCutOff) / epsilon, 0.0f, 1.0f);
+
+    if(tetha > cosOuterCutOff) {
+        float attenuation = CalculateAttenuation(spotConstant, spotLinear, spotQuadratic, length(spotDir));
+        vec3 spotColor = CalculatePhongLighting(spotColor, spotAmbientIntensity, normalize(spotDir));
+
+        return (spotColor * intensity * attenuation);
+    } else {
+        return vec3(0, 0, 0);
+    }
+}
+
+vec3 CalculateLightCasters()
+{
+    vec3 finalColor = vec3(0.f, 0.f, 0.f);
 
     // DIRECTIONAL LIGHT
-    vec4 directionalColor = CalculateLight(directionalColor, directionalAmbientIntensity, directionalDiffuseIntensity, directionalDirection);
+    finalColor += CalculateDirectionalLight();
 
     // POINT LIGHT
-    vec3 pointDirection = fragmentPosition - pointPosition;
-    float distance = length(pointDirection);
-    pointDirection = normalize(pointDirection);
-
-    vec4 pointColor = CalculateLight(pointColor, pointAmbientIntensity, pointDiffuseIntensity, pointDirection);
-    float pointAttenuation = (pointExponent * distance * distance) + 
-                        (pointLinear * distance) +
-                        pointConstant;
-
-    finalColor += pointColor / pointAttenuation;
+    finalColor += CalculatePointLight();
 
     // SPOT LIGHT
-    vec3 rayDirection = normalize(fragmentPosition - spotPosition);
-    float slFactor = dot(rayDirection, spotDirection);
-
-    if(slFactor > spotEdge) {
-        vec3 pointDirection = fragmentPosition - spotPosition;
-        float distance = length(pointDirection);
-        pointDirection = normalize(pointDirection);
-
-        vec4 spotColor = CalculateLight(spotColor, spotAmbientIntensity, spotDiffuseIntensity, spotPosition);
-        float spotAttenuation = (spotExponent * distance * distance) + 
-                            (spotLinear * distance) +
-                            spotConstant;
-
-        finalColor += (spotColor * (1.f - (1.f - slFactor) * (1.f / (1.f - spotEdge)))) / spotAttenuation;
-    } else {
-        finalColor += vec4(0, 0, 0, 0);
-    }
+    finalColor += CalculateSpotLight();
 
     return finalColor;
 }
@@ -108,12 +161,10 @@ vec4 CalculateLightTypes()
 void main() {
     vec2 adjustTexCoord = vec2(uvsFragmentShader.x, 1.0 - uvsFragmentShader.y);
 
-    vec4 finalColor = CalculateLightTypes();
+    vec4 finalColor = vec4(CalculateLightCasters(), 1.f);
 
     if (usingTexture == 1) {
-        vec4 textureColor = texture(textureSampler, adjustTexCoord);
-        
-        fragColor = textureColor * finalColor;
+        fragColor = texture(textureSampler, adjustTexCoord) * finalColor;
     }
     else {
         fragColor = baseColor * finalColor;

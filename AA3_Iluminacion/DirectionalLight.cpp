@@ -7,9 +7,9 @@ DirectionalLight::DirectionalLight() : Light()
 
 DirectionalLight::DirectionalLight(
 	GLfloat _red, GLfloat _green, GLfloat _blue,
-	GLfloat _ambientIntensity, GLfloat _diffuseIntensity,
+	GLfloat _ambientIntensity,
 	GLfloat _xDirection, GLfloat _yDirection, GLfloat _zDirection
-) : Light(_red, _green, _blue, _ambientIntensity, _diffuseIntensity)
+) : Light(_red, _green, _blue, _ambientIntensity)
 {
 	direction = glm::vec3(_xDirection, _yDirection, _zDirection);
 }
@@ -21,9 +21,6 @@ void DirectionalLight::UseDirectionalLight(GLuint program)
 
 	// Configura la intensidad ambiental de la luz direccional
 	glUniform1f(glGetUniformLocation(program, "directionalAmbientIntensity"), ambientIntensity);
-
-	// Configura la intensidad difusa de la luz direccional
-	glUniform1f(glGetUniformLocation(program, "directionalDiffuseIntensity"), diffuseIntensity);
 
 	// Configura la dirección de la luz direccional
 	glUniform3f(glGetUniformLocation(program, "directionalDirection"), direction.x, direction.y, direction.z);

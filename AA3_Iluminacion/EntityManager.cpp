@@ -2,34 +2,40 @@
 
 void EntityManager::InitializeEntities()
 {
+	/// <sumary>
+
 	InitializeSpawnPoints();
 
 	pointLight = new PointLight(
 		1.f, 1.f, 1.f,								//Color
-		7.5f, 3.5f,									//Intensity
+		7.5f,										//Intensity
 		0.f, 0.2f, 0.f,								//Position
-		0.3f, 0.2f, 0.1f,							//Lights constants
+		1.f, 0.09f, 0.032f,							//Lights constants
 		7.5f, glm::two_pi<float>() / 20.0f, 0.f		// Orbit
 	);
 
 	spotLight = new SpotLight(
 		1.f, 1.f, 1.f,								//Color
-		3.f, 1.f,									//Intensity
+		3.f,										//Intensity
 		0.f, 0.f, 0.f,								//Position
 		0.f, -1.f, 0.f,								//Direction
-		1.f, 0.2f, 0.032f,							//Lights constants
-		15.f										//Radius
+		1.f, 0.09f, 0.032f,							//Lights constants
+		12.5f, 17.5f								//CutOffs
 	);
 
 	directionalLight = new DirectionalLight(
 		1.f, 1.f, 1.f,								//Color
-		0.2f, 0.5f,									//Intensity
+		0.2f,										//Intensity
 		1.f, 1.f, 0.f								//Direction
 	);
 
 	// Creamos diferente Tipos de materiales
-	Material shinyMaterial = Material(1.0f, 32);
-	Material dullMaterial = Material(0.3f, 4);
+	Material houseMaterial = Material(0.7f, 0.3f, 32);
+	Material trollMaterial = Material(0.5f, 1.f, 70);
+	Material stoneMaterial = Material(1.f, 0.3f, 4);
+	Material groundMaterial = Material(1.f, 0.2f, 20);
+	Material sunMaterial = Material(0.f, 1.f, 200);
+	Material moonMaterial = Material(0.f, 1.f, 200);
 
 	// Inicializamos la camara
 	Camera* camera = new Camera(
@@ -50,7 +56,7 @@ void EntityManager::InitializeEntities()
 		glm::vec3(1.f), 
 		camera->GetCameraPosition(), 
 		MODELS.GetModel(0), 
-		shinyMaterial, 
+		trollMaterial,
 		0
 	);
 
@@ -68,7 +74,7 @@ void EntityManager::InitializeEntities()
 		glm::vec3(0.5f),
 		camera->GetCameraPosition(),
 		MODELS.GetModel(1),
-		shinyMaterial,
+		stoneMaterial,
 		1
 	);
 
@@ -86,7 +92,7 @@ void EntityManager::InitializeEntities()
 		glm::vec3(0.5f),
 		camera->GetCameraPosition(),
 		MODELS.GetModel(2),
-		shinyMaterial,
+		houseMaterial,
 		2
 	);
 
@@ -104,7 +110,7 @@ void EntityManager::InitializeEntities()
 		glm::vec3(10.f, 1.f, 10.f), 
 		glm::vec4(0.2f, 0.1f, 0.f, 1.f), 
 		camera->GetCameraPosition(),
-		shinyMaterial
+		groundMaterial
 	);
 
 	// Ponemos que le afecten todas las luces en el suelo
@@ -121,7 +127,7 @@ void EntityManager::InitializeEntities()
 		glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec4(1.f, 1.f, 0.f, 1.f),
 		camera->GetCameraPosition(),
-		shinyMaterial,
+		sunMaterial,
 		7.5f, glm::two_pi<float>() / 20.0f, 0.f, true
 	);
 
@@ -136,7 +142,7 @@ void EntityManager::InitializeEntities()
 		glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec4(1.f, 1.f, 1.f, 1.f),
 		camera->GetCameraPosition(),
-		shinyMaterial,
+		moonMaterial,
 		7.5f, glm::two_pi<float>() / 20.0f, glm::pi<float>(), true
 	);
 
@@ -158,7 +164,6 @@ void EntityManager::InitializeSpawnPoints()
 	spawnPoints.push_back(glm::vec3(-2.f, 0.5f, 2.f));
 	spawnPoints.push_back(glm::vec3(3.f, 0.5f, -6.f));
 	spawnPoints.push_back(glm::vec3(-7.f, 0.5f, -1.f));
-
 
 	for (int i = 0; i < spawnPoints.size(); i++)
 	{

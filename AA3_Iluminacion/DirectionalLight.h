@@ -8,7 +8,7 @@ public:
 
 	DirectionalLight(
 		GLfloat _red, GLfloat _green, GLfloat _blue, 
-		GLfloat _ambientIntensity, GLfloat _diffuseIntensity,
+		GLfloat _ambientIntensity,
 		GLfloat _xDirection, GLfloat _yDirection, GLfloat _zDirection
 	);
 
