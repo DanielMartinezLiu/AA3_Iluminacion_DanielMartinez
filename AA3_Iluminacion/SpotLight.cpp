@@ -5,65 +5,57 @@ SpotLight::SpotLight() : PointLight()
 	ambientIntensityOriginal = 1.f;
 
 	direction = glm::vec3(0.f, 0.f, 0.f);
-	edge = 0.f;
+	cutOff = 0.f;
+	outerCutOff = 0.f;
 
 	lightActive = false;
 	isPressing = false;
 }
 
-SpotLight::SpotLight(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _ambientIntensity, GLfloat _diffuseIntensity, GLfloat _xPos, GLfloat _yPos, GLfloat _zPos, GLfloat _xDir, GLfloat _yDir, GLfloat _zDir, GLfloat _constant, GLfloat _linear, GLfloat _exponent, GLfloat _edge)
-	: PointLight(_red, _green, _blue, _ambientIntensity, _diffuseIntensity, _xPos, _yPos, _zPos, _constant, _linear, _exponent)
+SpotLight::SpotLight(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _ambientIntensity, GLfloat _xPos, GLfloat _yPos, GLfloat _zPos, GLfloat _xDir, GLfloat _yDir, GLfloat _zDir, GLfloat _constant, GLfloat _linear, GLfloat _quadratic, GLfloat _cutOff, GLfloat _outerCutOff)
+	: PointLight(_red, _green, _blue, _ambientIntensity, _xPos, _yPos, _zPos, _constant, _linear, _quadratic)
 {
 	ambientIntensityOriginal = _ambientIntensity;
 
 	direction = glm::vec3(_xDir, _yDir, _zDir);
 
-	edge = _edge;
-	procEdge = cosf(glm::radians(edge));
+	cutOff = _cutOff;
+	outerCutOff = _outerCutOff;
 
 	lightActive = false;
 	isPressing = false;
 }
 
-void SpotLight::UseSpotLight(GLuint program, int index)
+void SpotLight::UseSpotLight(GLuint program)
 {
 	char uniformName[128];
 
 	// Configura el color base de la foco de luz
-	snprintf(uniformName, sizeof(uniformName), "spotLights[%d].pointBase.base.color", index);
-	glUniform3f(glGetUniformLocation(program, uniformName), color.x, color.y, color.z);
+	glUniform3f(glGetUniformLocation(program, "spotColor"), color.x, color.y, color.z);
 
 	// Configura la intensidad ambiental de el foco de luz
-	snprintf(uniformName, sizeof(uniformName), "spotLights[%d].pointBase.base.ambientIntensity", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), ambientIntensity);
-
-	// Configura la intensidad difusa de el foco de luz
-	snprintf(uniformName, sizeof(uniformName), "spotLights[%d].pointBase.base.diffuseIntensity", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), diffuseIntensity);
+	glUniform1f(glGetUniformLocation(program, "spotAmbientIntensity"), ambientIntensity);
 
 	// Configura la posición de el foco de luz
-	snprintf(uniformName, sizeof(uniformName), "spotLights[%d].pointBase.position", index);
-	glUniform3f(glGetUniformLocation(program, uniformName), transform.position.x, transform.position.y, transform.position.z);
+	glUniform3f(glGetUniformLocation(program, "spotPosition"), transform.position.x, transform.position.y, transform.position.z);
 
 	// Configura el factor de atenuación constante de el foco de luz
-	snprintf(uniformName, sizeof(uniformName), "spotLights[%d].pointBase.constant", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), constant);
+	glUniform1f(glGetUniformLocation(program, "spotConstant"), constant);
 
 	// Configura el factor de atenuación lineal de el foco de luz
-	snprintf(uniformName, sizeof(uniformName), "spotLights[%d].pointBase.linear", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), linear);
+	glUniform1f(glGetUniformLocation(program, "spotLinear"), linear);
 
 	// Configura el factor de atenuación exponencial de el foco de luz
-	snprintf(uniformName, sizeof(uniformName), "spotLights[%d].pointBase.exponent", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), exponent);
+	glUniform1f(glGetUniformLocation(program, "spotQuadratic"), quadratic);
 
 	// Configura la direccion de el foco de luz
-	snprintf(uniformName, sizeof(uniformName), "spotLights[%d].direction", index);
-	glUniform3f(glGetUniformLocation(program, uniformName), direction.x, direction.y, direction.z);
+	glUniform3f(glGetUniformLocation(program, "spotDirection"), direction.x, direction.y, direction.z);
 
-	// Configura el angulo del foco de luz
-	snprintf(uniformName, sizeof(uniformName), "spotLights[%d].edge", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), procEdge);
+	// Configura el angulo interior del foco de luz
+	glUniform1f(glGetUniformLocation(program, "spotCutOff"), cutOff);
+
+	// Configura el angulo exterior del foco de luz
+	glUniform1f(glGetUniformLocation(program, "spotOuterCutOff"), outerCutOff);
 }
 
 void SpotLight::SetCamera(Camera* _camera)
@@ -73,7 +65,7 @@ void SpotLight::SetCamera(Camera* _camera)
 
 void SpotLight::Update()
 {
-	// Llama a la función KeyControl y pasa las teclas presionadas
+	// Llama a la funcion KeyControl y pasa las teclas presionadas
 	KeyControl(GLM.GetsKeys());
 
 	if (lightActive)

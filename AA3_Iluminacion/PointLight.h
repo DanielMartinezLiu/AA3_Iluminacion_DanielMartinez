@@ -7,19 +7,19 @@ public:
 	PointLight();
 	PointLight(
 		GLfloat _red, GLfloat _green, GLfloat _blue,
-		GLfloat _ambientIntensity, GLfloat _diffuseIntensity,
+		GLfloat _ambientIntensity,
 		GLfloat _xPos, GLfloat _yPos, GLfloat _zPos,
-		GLfloat _constant, GLfloat _linear, GLfloat _exponent);
+		GLfloat _constant, GLfloat _linear, GLfloat _quadratic);
 
 	PointLight(
 		GLfloat _red, GLfloat _green, GLfloat _blue,
-		GLfloat _ambientIntensity, GLfloat _diffuseIntensity,
+		GLfloat _ambientIntensity,
 		GLfloat _xPos, GLfloat _yPos, GLfloat _zPos,
-		GLfloat _constant, GLfloat _linear, GLfloat _exponent,
+		GLfloat _constant, GLfloat _linear, GLfloat _quadratic,
 		GLfloat _radius, GLfloat _speed, GLfloat _angle
 	);
 
-	void UsePointLight(GLuint program, int index);
+	void UsePointLight(GLuint program);
 
 	~PointLight();
 
@@ -29,7 +29,7 @@ public:
 protected:
 	GLfloat constant;
 	GLfloat linear;
-	GLfloat exponent;
+	GLfloat quadratic;
 
 private:
 	glm::vec3 center;
@@ -39,7 +39,6 @@ private:
 	float angle;
 
 	float ambientIntesityOriginal;
-	float diffuseIntesityOriginal;
 
 	float deltaTime;
 };

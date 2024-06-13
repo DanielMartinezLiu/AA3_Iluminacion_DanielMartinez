@@ -25,13 +25,9 @@ Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, 
 				+1.f, +1.f, +1.f
 	};
 
-	directionalLights = nullptr;
-	pointLights = nullptr;
-	spotLights = nullptr;
-
-	directionalLightCount = 0;
-	pointLightCount = 0;
-	spotLightCount = 0;
+	directionalLight = nullptr;
+	pointLight = nullptr;
+	spotLight = nullptr;
 
 	orbitObject = false;
 	angle = 0.f;
@@ -50,7 +46,6 @@ Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, 
 	eyePosition = _eyePosition;
 	material = _material;
 
-
 	points = {
 				-1.f, +1.f, -1.f,
 				+1.f, +1.f, -1.f,
@@ -68,13 +63,9 @@ Primitive::Primitive(GLuint _program, glm::vec3 _position, glm::vec3 _rotation, 
 				+1.f, +1.f, +1.f
 	};
 
-	directionalLights = nullptr;
-	pointLights = nullptr;
-	spotLights = nullptr;
-
-	directionalLightCount = 0;
-	pointLightCount = 0;
-	spotLightCount = 0;
+	directionalLight = nullptr;
+	pointLight = nullptr;
+	spotLight = nullptr;
 
 	center = glm::vec3(0.f);
 	radius = _radius;
@@ -152,21 +143,19 @@ void Primitive::Update()
 	material.UseMaterial(program);
 
 	// Pasar la luz direccional
-	if (directionalLightCount > 0 && directionalLights)
+	if (directionalLight != nullptr)
 	{
-		SetDirectionalLights(directionalLights, directionalLightCount);
+		directionalLight->UseDirectionalLight(program);
 	}
-
 	// Pasar la point light
-	if (pointLightCount > 0 && pointLights)
+	if (pointLight != nullptr)
 	{
-		SetPointLights(pointLights, pointLightCount);
+		pointLight->UsePointLight(program);
 	}
-
 	// Pasar la spot light
-	if (spotLightCount > 0 && spotLights)
+	if (spotLight != nullptr)
 	{
-		SetSpotLights(spotLights, spotLightCount);
+		spotLight->UseSpotLight(program);
 	}
 }
 
@@ -197,61 +186,9 @@ void Primitive::UpdateOrbit()
 	transform.position.z = 0;
 }
 
-void Primitive::SetDirectionalLights(DirectionalLight* dLight, unsigned int lightCount)
+void Primitive::SetLights(DirectionalLight* dLight, PointLight* pLight, SpotLight* sLight)
 {
-	// Asignación de las luces direccionales y su cantidad
-	directionalLights = dLight;
-	directionalLightCount = lightCount;
-
-	// Limitación de la cantidad de luces si excede el límite máximo
-	if (lightCount > MAX_POINT_LIGHTS)
-		lightCount = MAX_POINT_LIGHTS;
-
-	// Envío del número actual de luces direccionales
-	glUniform1i(glGetUniformLocation(program, "directionalLightCount"), lightCount);
-
-	// Configuración de cada luz direccional
-	for (size_t i = 0; i < lightCount; i++)
-	{
-		dLight[i].UseDirectionalLight(program, i);
-	}
-}
-void Primitive::SetPointLights(PointLight* pLight, unsigned int lightCount)
-{
-	// Asignación de las point light y su cantidad
-	pointLights = pLight;
-	pointLightCount = lightCount;
-
-	// Limitación de la cantidad de luces si excede el límite máximo
-	if (lightCount > MAX_POINT_LIGHTS)
-		lightCount = MAX_POINT_LIGHTS;
-
-	// Envío del número actual las point light
-	glUniform1i(glGetUniformLocation(program, "pointLightCount"), lightCount);
-
-	// Configuración de cada point light
-	for (size_t i = 0; i < lightCount; i++)
-	{
-		pLight[i].UsePointLight(program, i);
-	}
-}
-
-void Primitive::SetSpotLights(SpotLight* sLight, unsigned int lightCount)
-{
-	// Asignación de las luces de foco y su cantidad
-	spotLights = sLight;
-	spotLightCount = lightCount;
-
-	// Limitación de la cantidad de luces si excede el límite máximo
-	if (lightCount > MAX_SPOT_LIGHTS)
-		lightCount = MAX_SPOT_LIGHTS;
-
-	// Envío del número actual las spot light
-	glUniform1i(glGetUniformLocation(program, "spotLightCount"), lightCount);
-
-	// Configuración de cada spot light
-	for (size_t i = 0; i < lightCount; i++)
-	{
-		sLight[i].UseSpotLight(program, i);
-	}
+	directionalLight = dLight;
+	pointLight = pLight;
+	spotLight = sLight;
 }

@@ -11,8 +11,7 @@ class Light
 public:
 	Light();
 
-	Light(GLfloat _red, GLfloat _green, GLfloat _blue, 
-		GLfloat _ambientIntensity, GLfloat _diffuseIntensity);
+	Light(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _ambientIntensity);
 	~Light();
 
 protected: 
@@ -20,6 +19,5 @@ protected:
 
 	glm::vec3 color;
 	GLfloat ambientIntensity;
-	GLfloat diffuseIntensity;
 
 };

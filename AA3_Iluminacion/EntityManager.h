@@ -28,9 +28,9 @@ private:
 	std::vector<glm::vec3> spawnPoints;
 	std::vector<bool> usedSpawnPoint;
 
-	std::vector<DirectionalLight*> directionalLights;
-	std::vector<PointLight*> pointLights;
-	std::vector<SpotLight*> spotLights;
+	DirectionalLight* directionalLight;
+	PointLight* pointLight;
+	SpotLight* spotLight;
 	
 	void InitializeSpawnPoints();
 	glm::vec3 GetRandomUnusedPosition();
