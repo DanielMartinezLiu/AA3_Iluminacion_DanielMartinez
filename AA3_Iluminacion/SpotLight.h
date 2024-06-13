@@ -9,13 +9,13 @@ public:
 
 	SpotLight(
 		GLfloat _red, GLfloat _green, GLfloat _blue,
-		GLfloat _ambientIntensity, GLfloat _diffuseIntensity,
+		GLfloat _ambientIntensity,
 		GLfloat _xPos, GLfloat _yPos, GLfloat _zPos,
 		GLfloat _xDir, GLfloat _yDir, GLfloat _zDir,
-		GLfloat _constant, GLfloat _linear, GLfloat _exponent,
-		GLfloat _edge);
+		GLfloat _constant, GLfloat _linear, GLfloat _quadratic,
+		GLfloat _cutOff, GLfloat _outerCutOff);
 
-	void UseSpotLight(GLuint program, int index);
+	void UseSpotLight(GLuint program);
 
 	void SetCamera(Camera* _camera);
 
@@ -32,8 +32,8 @@ private:
 
 	GLfloat ambientIntensityOriginal;
 
-	GLfloat edge;
-	GLfloat procEdge;
+	GLfloat cutOff;
+	GLfloat outerCutOff;
 	
 	bool lightActive;
 	bool isPressing;

@@ -6,7 +6,7 @@ PointLight::PointLight() : Light()
 
 	constant = 1.f;
 	linear = 0.f;
-	exponent = 0.f;
+	quadratic = 0.f;
 
 	center = glm::vec3(0.f);
 	radius = 7.5f;
@@ -14,16 +14,15 @@ PointLight::PointLight() : Light()
 	angle = 0.f;
 }
 
-PointLight::PointLight(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _ambientIntensity, GLfloat _diffuseIntensity, GLfloat _xPos, GLfloat _yPos, GLfloat _zPos, GLfloat _constant, GLfloat _linear, GLfloat _exponent)
-: Light(_red, _green, _blue, _ambientIntensity, _diffuseIntensity) {
+PointLight::PointLight(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _ambientIntensity, GLfloat _xPos, GLfloat _yPos, GLfloat _zPos, GLfloat _constant, GLfloat _linear, GLfloat _quadratic)
+: Light(_red, _green, _blue, _ambientIntensity) {
 	transform.position = glm::vec3(_xPos, _yPos, _zPos);
 
 	ambientIntesityOriginal = _ambientIntensity;
-	diffuseIntesityOriginal = _diffuseIntensity;
 
 	constant = _constant;
 	linear = _linear;
-	exponent = _exponent;
+	quadratic = _quadratic;
 
 	center = glm::vec3(0.f);
 	radius = 7.5f;
@@ -31,16 +30,15 @@ PointLight::PointLight(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _amb
 	angle = 0.f;
 }
 
-PointLight::PointLight(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _ambientIntensity, GLfloat _diffuseIntensity, GLfloat _xPos, GLfloat _yPos, GLfloat _zPos, GLfloat _constant, GLfloat _linear, GLfloat _exponent, GLfloat _radius, GLfloat _speed, GLfloat _angle)
-	: Light(_red, _green, _blue, _ambientIntensity, _diffuseIntensity) {
+PointLight::PointLight(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _ambientIntensity, GLfloat _xPos, GLfloat _yPos, GLfloat _zPos, GLfloat _constant, GLfloat _linear, GLfloat _quadratic, GLfloat _radius, GLfloat _speed, GLfloat _angle)
+	: Light(_red, _green, _blue, _ambientIntensity) {
 	transform.position = glm::vec3(_xPos, _yPos, _zPos);
 
 	ambientIntesityOriginal = _ambientIntensity;
-	diffuseIntesityOriginal = _diffuseIntensity;
 
 	constant = _constant;
 	linear = _linear;
-	exponent = _exponent;
+	quadratic = _quadratic;
 
 	center = glm::vec3(0.f);
 	radius = _radius;
@@ -48,37 +46,25 @@ PointLight::PointLight(GLfloat _red, GLfloat _green, GLfloat _blue, GLfloat _amb
 	angle = _angle;
 }
 
-void PointLight::UsePointLight(GLuint program, int index)
+void PointLight::UsePointLight(GLuint program)
 {
-	char uniformName[128];
-
 	// Configura el color base de la point light
-	snprintf(uniformName, sizeof(uniformName), "pointLights[%d].base.color", index);
-	glUniform3f(glGetUniformLocation(program, uniformName), color.x, color.y, color.z);
+	glUniform3f(glGetUniformLocation(program, "pointColor"), color.x, color.y, color.z);
 
 	// Configura la intensidad ambiental de la point light
-	snprintf(uniformName, sizeof(uniformName), "pointLights[%d].base.ambientIntensity", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), ambientIntensity);
-
-	// Configura la intensidad difusa de la point light
-	snprintf(uniformName, sizeof(uniformName), "pointLights[%d].base.diffuseIntensity", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), diffuseIntensity);
+	glUniform1f(glGetUniformLocation(program, "pointAmbientIntensity"), ambientIntensity);
 
 	// Configura la posición de la point light
-	snprintf(uniformName, sizeof(uniformName), "pointLights[%d].position", index);
-	glUniform3f(glGetUniformLocation(program, uniformName), transform.position.x, transform.position.y, transform.position.z);
+	glUniform3f(glGetUniformLocation(program, "pointPosition"), transform.position.x, transform.position.y, transform.position.z);
 
 	// Configura el factor de atenuación constante de la point light
-	snprintf(uniformName, sizeof(uniformName), "pointLights[%d].constant", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), constant);
+	glUniform1f(glGetUniformLocation(program, "pointConstant"), constant);
 
 	// Configura el factor de atenuación lineal de la point light
-	snprintf(uniformName, sizeof(uniformName), "pointLights[%d].linear", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), linear);
+	glUniform1f(glGetUniformLocation(program, "pointLinear"), linear);
 
 	// Configura el factor de atenuación exponencial de la point light
-	snprintf(uniformName, sizeof(uniformName), "pointLights[%d].exponent", index);
-	glUniform1f(glGetUniformLocation(program, uniformName), exponent);
+	glUniform1f(glGetUniformLocation(program, "pointQuadratic"), quadratic);
 }
 
 PointLight::~PointLight()
@@ -112,10 +98,9 @@ void PointLight::Update()
 
 	// Calcula el factor de intensidad basado en el factor de mezcla
 	float intensityFactor = glm::mix(0.15f, 1.0f, blendFactor);
-
-	// Ajusta la intensidad ambiental y difusa basada en el factor de intensidad
+	
+	// Ajusta la intensidad ambiental basada en el factor de intensidad
 	ambientIntensity = ambientIntesityOriginal * intensityFactor;
-	diffuseIntensity = diffuseIntesityOriginal * intensityFactor;
 }
 
 void PointLight::Render()

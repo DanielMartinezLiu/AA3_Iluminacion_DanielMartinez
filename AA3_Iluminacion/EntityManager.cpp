@@ -2,33 +2,40 @@
 
 void EntityManager::InitializeEntities()
 {
+	/// <sumary>
+
 	InitializeSpawnPoints();
 
-	pointLights.push_back(new PointLight(
-		1.f, 1.f, 1.f,							//Color
-		7.5f, 3.5f,								//Intensity
-		0.f, 0.2f, 0.f,							//Position
-		0.3f, 0.2f, 0.1f,						//Lights constants
-		7.5f, glm::two_pi<float>() / 20.0f, 0.f // Orbit
-	));
+	pointLight = new PointLight(
+		1.f, 1.f, 1.f,								//Color
+		7.5f,										//Intensity
+		0.f, 0.2f, 0.f,								//Position
+		1.f, 0.09f, 0.032f,							//Lights constants
+		7.5f, glm::two_pi<float>() / 20.0f, 0.f		// Orbit
+	);
 
-	spotLights.push_back(new SpotLight(
-		1.f, 1.f, 1.f,							//Color
-		3.f, 1.f,								//Intensity
-		0.f, 0.f, 0.f,							//Position
-		0.f, -1.f, 0.f,							//Direction
-		1.f, 0.2f, 0.032f,						//Lights constants
-		15.f									//Radius
-	));
+	spotLight = new SpotLight(
+		1.f, 1.f, 1.f,								//Color
+		3.f,										//Intensity
+		0.f, 0.f, 0.f,								//Position
+		0.f, -1.f, 0.f,								//Direction
+		1.f, 0.09f, 0.032f,							//Lights constants
+		12.5f, 17.5f								//CutOffs
+	);
 
-	directionalLights.push_back(new DirectionalLight(
-		1.f, 1.f, 1.f,							//Color
-		0.2f, 0.5f,								//Intensity
-		1.f, 1.f, 0.f							//Direction
-	));
+	directionalLight = new DirectionalLight(
+		1.f, 1.f, 1.f,								//Color
+		0.2f,										//Intensity
+		1.f, 1.f, 0.f								//Direction
+	);
 
-	Material shinyMaterial = Material(1.0f, 32);
-	Material dullMaterial = Material(0.3f, 4);
+	// Creamos diferente Tipos de materiales
+	Material houseMaterial = Material(0.7f, 0.3f, 32);
+	Material trollMaterial = Material(0.5f, 1.f, 70);
+	Material stoneMaterial = Material(1.f, 0.3f, 4);
+	Material groundMaterial = Material(1.f, 0.2f, 20);
+	Material sunMaterial = Material(0.f, 1.f, 200);
+	Material moonMaterial = Material(0.f, 1.f, 200);
 
 	// Inicializamos la camara
 	Camera* camera = new Camera(
@@ -39,7 +46,7 @@ void EntityManager::InitializeEntities()
 	);
 
 	// Ponemos la camara en la spotlight para que le siga la posicion
-	spotLights[0]->SetCamera(camera);
+	spotLight->SetCamera(camera);
 
 	// Inicializamos el troll
 	GameObject* troll = new GameObject(
@@ -49,14 +56,12 @@ void EntityManager::InitializeEntities()
 		glm::vec3(1.f), 
 		camera->GetCameraPosition(), 
 		MODELS.GetModel(0), 
-		shinyMaterial, 
+		trollMaterial,
 		0
 	);
 
 	// Ponemos que le afecten todas las luces en el troll
-	troll->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
-	troll->SetPointLights(*pointLights.data(), pointLights.size());
-	troll->SetSpotLights(*spotLights.data(), spotLights.size());
+	troll->SetLights(directionalLight, pointLight, spotLight);
 
 	// Ponemos el troll dentro del vector de entidades
 	entities.push_back(troll);
@@ -69,14 +74,12 @@ void EntityManager::InitializeEntities()
 		glm::vec3(0.5f),
 		camera->GetCameraPosition(),
 		MODELS.GetModel(1),
-		shinyMaterial,
+		stoneMaterial,
 		1
 	);
 
 	// Ponemos que le afecten todas las luces en la piedra
-	stone->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
-	stone->SetPointLights(*pointLights.data(), pointLights.size());
-	stone->SetSpotLights(*spotLights.data(), spotLights.size());
+	stone->SetLights(directionalLight, pointLight, spotLight);
 
 	// Ponemos la piedra dentro del vector de entidades
 	entities.push_back(stone);
@@ -89,14 +92,12 @@ void EntityManager::InitializeEntities()
 		glm::vec3(0.5f),
 		camera->GetCameraPosition(),
 		MODELS.GetModel(2),
-		shinyMaterial,
+		houseMaterial,
 		2
 	);
 
 	// Ponemos que le afecten todas las luces en la casa
-	house->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
-	house->SetPointLights(*pointLights.data(), pointLights.size());
-	house->SetSpotLights(*spotLights.data(), spotLights.size());
+	house->SetLights(directionalLight, pointLight, spotLight);
 
 	// Ponemos la casa dentro del vector de entidades
 	entities.push_back(house);
@@ -109,13 +110,11 @@ void EntityManager::InitializeEntities()
 		glm::vec3(10.f, 1.f, 10.f), 
 		glm::vec4(0.2f, 0.1f, 0.f, 1.f), 
 		camera->GetCameraPosition(),
-		shinyMaterial
+		groundMaterial
 	);
 
 	// Ponemos que le afecten todas las luces en el suelo
-	ground->SetDirectionalLights(*directionalLights.data(), directionalLights.size());
-	ground->SetPointLights(*pointLights.data(), pointLights.size());
-	ground->SetSpotLights(*spotLights.data(), spotLights.size());
+	ground->SetLights(directionalLight, pointLight, spotLight);
 
 	// Ponemos el suelo dentro del vector de entidades
 	entities.push_back(ground);
@@ -128,7 +127,7 @@ void EntityManager::InitializeEntities()
 		glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec4(1.f, 1.f, 0.f, 1.f),
 		camera->GetCameraPosition(),
-		shinyMaterial,
+		sunMaterial,
 		7.5f, glm::two_pi<float>() / 20.0f, 0.f, true
 	);
 
@@ -143,7 +142,7 @@ void EntityManager::InitializeEntities()
 		glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec4(1.f, 1.f, 1.f, 1.f),
 		camera->GetCameraPosition(),
-		shinyMaterial,
+		moonMaterial,
 		7.5f, glm::two_pi<float>() / 20.0f, glm::pi<float>(), true
 	);
 
@@ -165,7 +164,6 @@ void EntityManager::InitializeSpawnPoints()
 	spawnPoints.push_back(glm::vec3(-2.f, 0.5f, 2.f));
 	spawnPoints.push_back(glm::vec3(3.f, 0.5f, -6.f));
 	spawnPoints.push_back(glm::vec3(-7.f, 0.5f, -1.f));
-
 
 	for (int i = 0; i < spawnPoints.size(); i++)
 	{
@@ -203,14 +201,10 @@ void EntityManager::EntitiesUpdate()
 		item->Render();
 	}
 
-	// Hacemos un update para todas los puntos de luz
-	for (PointLight* light : pointLights) {
-		light->Update();
-	}
+	// Hacemos un update para el puntos de luz
+	pointLight->Update();
 
-	// Hacemos un update para todas los focos de luz
-	for (SpotLight* light : spotLights) {
-		light->Update();
-	}
+	// Hacemos un update para el focos de luz
+	spotLight->Update();
 }
 
